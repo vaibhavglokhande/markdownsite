@@ -1,0 +1,27 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Docs</title>
+    <th:block th:each="css: ${inlineCSS}">
+        <style th:replace="fragments/links :: inlineCssFragment (${css})"></style>
+    </th:block>
+
+    <th:block th:each="css: ${defaultCSS}">
+        <link th:replace="fragments/links :: cssFragment (${css})">
+    </th:block>
+</head>
+<body>
+<div class="container" th:utext="${markdownRender}">
+</div>
+
+<th:block th:each="src: ${defaultScript}">
+    <div th:replace="fragments/links :: scriptFragment (${src})"></div>
+</th:block>
+<th:block th:each="src: ${inlineScript}">
+    <div th:replace="fragments/links :: inlineScriptFragment (${src})"></div>
+</th:block>
+</body>
+</html>
