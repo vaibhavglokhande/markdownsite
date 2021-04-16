@@ -9,7 +9,7 @@ class CommonMarkRenderEngineTest {
 
     @Test
     void testSupports() {
-        String uuid = "08ad77e4-f723-3053-89ef-2d63478baa53";
+        String uuid = "3f150efe-1aab-3680-aba3-ecacf45eab36";
         CommonMarkRenderEngine commonMarkRenderEngine = new CommonMarkRenderEngine();
         assertTrue(commonMarkRenderEngine.supports(uuid));
     }
