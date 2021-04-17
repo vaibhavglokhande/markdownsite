@@ -13,6 +13,7 @@ public class RenderEngineConfigProperty<T> {
     private T propertyValue;
     private List<RenderEngineConfigProperty> childrenProperties;
     private boolean enabled;
+    private ConfigurablePropertiesRules<T> configurablePropertiesRules;
 
     public RenderEngineConfigProperty(String propertyName, T propertyValue, boolean enabled) {
         this(propertyName, propertyValue, new ArrayList<>(), enabled);
@@ -23,5 +24,13 @@ public class RenderEngineConfigProperty<T> {
         this.propertyValue = propertyValue;
         this.childrenProperties = childrenProperties;
         this.enabled = enabled;
+    }
+
+    public RenderEngineConfigProperty(String propertyName, T propertyValue, List<RenderEngineConfigProperty> childrenProperties, boolean enabled, ConfigurablePropertiesRules<T> configurablePropertiesRules) {
+        this.propertyName = propertyName;
+        this.propertyValue = propertyValue;
+        this.childrenProperties = childrenProperties;
+        this.enabled = enabled;
+        this.configurablePropertiesRules = configurablePropertiesRules;
     }
 }
