@@ -10,7 +10,7 @@ import java.util.List;
 @ToString(exclude = {"parent"})
 public class Node<G> {
     private Node<G> parent;
-    private final List<Node<G>> children = new ArrayList<>();
+    private List<Node<G>> children = new ArrayList<>();
     G value;
 
     public void addChild(Node<G> childNode) {

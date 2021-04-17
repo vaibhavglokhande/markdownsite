@@ -1,7 +1,8 @@
 package com.markdownsite.integration.models;
 
 import com.google.gson.Gson;
-import com.markdownsite.integration.interfaces.NavigableTree;
+import com.markdownsite.integration.exceptions.TreeOperationException;
+import com.markdownsite.integration.interfaces.Tree;
 import com.markdownsite.integration.interfaces.TreeTraverseMode;
 import lombok.Getter;
 import org.springframework.util.Assert;
@@ -13,12 +14,12 @@ import java.util.List;
  * SimpleNavigableTree provides a simple data structure with hierarchical relationship of nodes.
  * <p>The tree is located at single root node and each node can have multiple children nodes. </p>
  */
-public class SimpleNavigableTree<T extends Node<G>, G> implements NavigableTree<T, G> {
+public class SimpleTree<T extends Node<G>, G> implements Tree<T, G> {
 
     @Getter
     private T rootNode;
 
-    public SimpleNavigableTree(T rootNode) {
+    public SimpleTree(T rootNode) {
         this.rootNode = rootNode;
     }
 
@@ -38,7 +39,7 @@ public class SimpleNavigableTree<T extends Node<G>, G> implements NavigableTree<
      * {@inheritDoc}
      * <p>This implementation creates and attach a new child node based on the provided node and returns it.</p>
      * <p>The child node is not updated, where as the parent node is updated and the new child node is attached to it.</p>
-     * */
+     */
     @Override
     public T addNode(T parentNode, T childNode) {
         Assert.notNull(parentNode, "Parent node is null.");
@@ -71,5 +72,33 @@ public class SimpleNavigableTree<T extends Node<G>, G> implements NavigableTree<
     @Override
     public T search(G value) {
         throw new RuntimeException("Method not yet implemented.");
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p><b>Node deletion strategy:</b> Deletes the node from the tree only if it is leaf node. For any other node, {@link TreeOperationException} exception will be generated.</p>
+     *
+     * @throws TreeOperationException when the node is not leaf node.
+     */
+    @Override
+    public void delete(T node) throws TreeOperationException {
+        if (!isLeafNode(node)) {
+            throw new TreeOperationException(com.markdownsite.integration.enums.TreeOperationException.NODE_DELETE_EXCEPTION);
+        }
+        T parent = getParent(node);
+        // In case of root node, parent will be null.
+        if (parent == null) {
+            // Delete the root node of the tree.
+            rootNode = null;
+            return;
+        }
+
+        parent.getChildren().remove(node);
+        node.setParent(null);
+    }
+
+    private boolean isLeafNode(T node) {
+        return node.getChildren().isEmpty();
     }
 }
