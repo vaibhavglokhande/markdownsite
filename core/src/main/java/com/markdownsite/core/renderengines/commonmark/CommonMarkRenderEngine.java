@@ -1,11 +1,12 @@
 package com.markdownsite.core.renderengines.commonmark;
 
 import com.markdownsite.integration.interfaces.RenderEngine;
-import com.markdownsite.integration.models.RenderEngineConfig;
+import com.markdownsite.integration.models.RenderEngineConfigProperty;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.UUID;
 
 @Component("CommonMarkRenderEngine")
@@ -38,12 +39,12 @@ public class CommonMarkRenderEngine implements RenderEngine {
     }
 
     @Override
-    public RenderEngineConfig getConfig() {
+    public Map<String, RenderEngineConfigProperty> getConfig() {
         return null;
     }
 
     @Override
-    public void updateRenderEngineConfig(RenderEngineConfig renderEngineConfig) {
+    public void updateRenderEngineConfig(Map<String, RenderEngineConfigProperty> renderEngineConfig) {
         throw new UnsupportedOperationException("Method not defined.");
     }
 

@@ -1,10 +1,10 @@
 package com.markdownsite.integration.interfaces;
 
-import com.markdownsite.integration.models.RenderEngineConfig;
+import com.markdownsite.integration.models.RenderEngineConfigProperty;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -48,14 +48,14 @@ public interface RenderEngine {
      *
      * @return the config
      */
-    RenderEngineConfig getConfig();
+    Map<String, RenderEngineConfigProperty> getConfig();
 
     /**
      * Update render engine config.
      *
      * @param renderEngineConfig the render engine config
      */
-    void updateRenderEngineConfig(RenderEngineConfig renderEngineConfig);
+    void updateRenderEngineConfig(Map<String, RenderEngineConfigProperty> renderEngineConfig);
 
     /**
      * Supports boolean.

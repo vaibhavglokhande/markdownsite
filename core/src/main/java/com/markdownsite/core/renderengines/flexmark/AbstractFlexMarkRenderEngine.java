@@ -2,7 +2,6 @@ package com.markdownsite.core.renderengines.flexmark;
 
 import com.markdownsite.integration.interfaces.RenderEngine;
 import com.markdownsite.integration.interfaces.ResourceConfig;
-import com.markdownsite.integration.models.RenderEngineConfig;
 import com.markdownsite.integration.models.RenderEngineConfigProperty;
 import com.vladsch.flexmark.ext.abbreviation.AbbreviationExtension;
 import com.vladsch.flexmark.ext.admonition.AdmonitionExtension;
@@ -34,17 +33,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractFlexMarkRenderEngine implements RenderEngine, ResourceConfig {
 
-    protected RenderEngineConfig renderEngineConfig;
+    protected Map<String, RenderEngineConfigProperty> renderEngineConfig;
 
 
     public AbstractFlexMarkRenderEngine() {
-        this.renderEngineConfig = new RenderEngineConfig();
-        this.renderEngineConfig.getConfigPropertyMap().putAll(getDefaultExtensionConfig());
+        this.renderEngineConfig = new ConcurrentHashMap<>();
+        this.renderEngineConfig.putAll(getDefaultExtensionConfig());
     }
 
     @Override
@@ -91,22 +90,21 @@ public abstract class AbstractFlexMarkRenderEngine implements RenderEngine, Reso
     }
 
     @Override
-    public RenderEngineConfig getConfig() {
+    public Map<String, RenderEngineConfigProperty> getConfig() {
         return this.renderEngineConfig;
     }
 
     @Override
-    public void updateRenderEngineConfig(RenderEngineConfig renderEngineConfig) {
-        synchronized (this.renderEngineConfig) {
+    public void updateRenderEngineConfig(Map<String, RenderEngineConfigProperty> renderEngineConfig) {
+        synchronized (this) {
             this.renderEngineConfig = renderEngineConfig;
         }
     }
 
     private List<Extension> getExtensions() {
         List<Extension> extensions = new ArrayList<>();
-        Map<String, RenderEngineConfigProperty> configPropertyMap = renderEngineConfig.getConfigPropertyMap();
-        if (configPropertyMap != null) {
-            configPropertyMap.forEach((propertyName, renderEngineConfigProperty) -> {
+        if (this.renderEngineConfig != null) {
+            this.renderEngineConfig.forEach((propertyName, renderEngineConfigProperty) -> {
                 Class propertyClass = (Class) renderEngineConfigProperty.getPropertyValue();
                 if (renderEngineConfigProperty.isEnabled() && Extension.class.isAssignableFrom(propertyClass)) {
                     try {
