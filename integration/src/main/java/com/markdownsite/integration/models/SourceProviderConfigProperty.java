@@ -11,20 +11,20 @@ import java.util.List;
 public class SourceProviderConfigProperty<T>  {
     private String propertyName;
     private T propertyValue;
-    private List<SourceProviderConfig> childrenProperties;
+    private List<SourceProviderConfigProperty> childrenProperties;
     private ConfigurablePropertiesRules<T> configurablePropertiesRules;
 
     public SourceProviderConfigProperty(String propertyName, T propertyValue) {
         this(propertyName, propertyValue, new ArrayList<>());
     }
 
-    public SourceProviderConfigProperty(String propertyName, T propertyValue, List<SourceProviderConfig> childrenProperties) {
+    public SourceProviderConfigProperty(String propertyName, T propertyValue, List<SourceProviderConfigProperty> childrenProperties) {
         this.propertyName = propertyName;
         this.propertyValue = propertyValue;
         this.childrenProperties = childrenProperties;
     }
 
-    public SourceProviderConfigProperty(String propertyName, T propertyValue, List<SourceProviderConfig> childrenProperties, ConfigurablePropertiesRules<T> configurablePropertiesRules) {
+    public SourceProviderConfigProperty(String propertyName, T propertyValue, List<SourceProviderConfigProperty> childrenProperties, ConfigurablePropertiesRules<T> configurablePropertiesRules) {
         this.propertyName = propertyName;
         this.propertyValue = propertyValue;
         this.childrenProperties = childrenProperties;

@@ -1,6 +1,7 @@
 package com.markdownsite.integration.models;
 
 import com.google.gson.Gson;
+import com.markdownsite.integration.enums.TreeOperationErrorCode;
 import com.markdownsite.integration.exceptions.TreeOperationException;
 import com.markdownsite.integration.interfaces.Tree;
 import com.markdownsite.integration.interfaces.TreeTraverseMode;
@@ -38,21 +39,18 @@ public class SimpleTree<T extends Node<G>, G> implements Tree<T, G> {
     /**
      * {@inheritDoc}
      * <p>This implementation creates and attach a new child node based on the provided node and returns it.</p>
-     * <p>The child node is not updated, where as the parent node is updated and the new child node is attached to it.</p>
      */
     @Override
     public T addNode(T parentNode, T childNode) {
         Assert.notNull(parentNode, "Parent node is null.");
         Assert.notNull(childNode, "Child node is null.");
-        Gson gson = new Gson();
         synchronized (this) {
             // Make a deep copy of the object
-            T newChildNode = (T) gson.fromJson(gson.toJson(childNode), childNode.getClass());
             // Set parent-child relationship.
-            newChildNode.setParent(parentNode);
+            childNode.setParent(parentNode);
             // Add the node to the tree.
-            parentNode.addChild(newChildNode);
-            return newChildNode;
+            parentNode.addChild(childNode);
+            return childNode;
         }
     }
 
@@ -84,7 +82,7 @@ public class SimpleTree<T extends Node<G>, G> implements Tree<T, G> {
     @Override
     public void delete(T node) throws TreeOperationException {
         if (!isLeafNode(node)) {
-            throw new TreeOperationException(com.markdownsite.integration.enums.TreeOperationException.NODE_DELETE_EXCEPTION);
+            throw new TreeOperationException(TreeOperationErrorCode.NODE_DELETE_EXCEPTION);
         }
         T parent = getParent(node);
         // In case of root node, parent will be null.

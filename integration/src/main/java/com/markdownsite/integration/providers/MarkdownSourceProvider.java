@@ -1,5 +1,6 @@
 package com.markdownsite.integration.providers;
 
+import com.markdownsite.integration.enums.SourceNotFoundErrorCode;
 import com.markdownsite.integration.exceptions.SourceNotFoundException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,9 @@ public class MarkdownSourceProvider {
 
     public MarkdownSource<?> getSource(String sourceIdentifier) throws SourceNotFoundException {
         if (markdownSources == null)
-            throw new SourceNotFoundException(com.markdownsite.integration.enums.SourceNotFoundException.SOURCE_NOT_CONFIGURED_EXCEPTION);
+            throw new SourceNotFoundException(SourceNotFoundErrorCode.SOURCE_NOT_CONFIGURED_EXCEPTION);
         Optional<MarkdownSource<?>> source = markdownSources.stream().filter(markdownSource -> markdownSource.sourceIdentifier().equalsIgnoreCase(sourceIdentifier)).findFirst();
-        return source.orElseThrow(() -> new SourceNotFoundException(com.markdownsite.integration.enums.SourceNotFoundException.SOURCE_NOT_FOUND_EXCEPTION));
+        return source.orElseThrow(() -> new SourceNotFoundException(SourceNotFoundErrorCode.SOURCE_NOT_FOUND_EXCEPTION));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.markdownsite.integration.providers;
 
+import com.markdownsite.integration.enums.SourceNotFoundErrorCode;
 import com.markdownsite.integration.exceptions.SourceNotFoundException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
 import org.junit.jupiter.api.Test;
@@ -29,14 +30,14 @@ class MarkdownSourceProviderTest {
     @Test
     void testForException() {
         SourceNotFoundException sourceNotFoundException = assertThrows(SourceNotFoundException.class, () -> markdownSourceProvider.getSource("invalid-id"));
-        assertEquals(com.markdownsite.integration.enums.SourceNotFoundException.SOURCE_NOT_FOUND_EXCEPTION, sourceNotFoundException.getErrorCode());
+        assertEquals(SourceNotFoundErrorCode.SOURCE_NOT_FOUND_EXCEPTION, sourceNotFoundException.getErrorCode());
     }
 
     @Test
     void testNoSourceConfiguredException() {
         MarkdownSourceProvider markdownSourceProvider = new MarkdownSourceProvider();
         SourceNotFoundException sourceNotFoundException = assertThrows(SourceNotFoundException.class, () -> markdownSourceProvider.getSource("invalid"));
-        assertEquals(com.markdownsite.integration.enums.SourceNotFoundException.SOURCE_NOT_CONFIGURED_EXCEPTION, sourceNotFoundException.getErrorCode());
+        assertEquals(SourceNotFoundErrorCode.SOURCE_NOT_CONFIGURED_EXCEPTION, sourceNotFoundException.getErrorCode());
     }
 
     @TestConfiguration

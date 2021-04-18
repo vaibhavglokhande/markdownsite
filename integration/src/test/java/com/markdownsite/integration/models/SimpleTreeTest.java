@@ -1,5 +1,6 @@
 package com.markdownsite.integration.models;
 
+import com.markdownsite.integration.enums.TreeOperationErrorCode;
 import com.markdownsite.integration.exceptions.TreeOperationException;
 import com.markdownsite.integration.interfaces.Tree;
 import org.junit.jupiter.api.Test;
@@ -105,7 +106,7 @@ class SimpleTreeTest {
 
         TreeOperationException treeOperationException = assertThrows(TreeOperationException.class, () -> tree.delete(rootNode));
 
-        assertEquals(com.markdownsite.integration.enums.TreeOperationException.NODE_DELETE_EXCEPTION, treeOperationException.getErrorCode());
+        assertEquals(TreeOperationErrorCode.NODE_DELETE_EXCEPTION, treeOperationException.getErrorCode());
 
     }
 }

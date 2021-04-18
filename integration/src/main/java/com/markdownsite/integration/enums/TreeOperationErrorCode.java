@@ -2,7 +2,7 @@ package com.markdownsite.integration.enums;
 
 import com.markdownsite.integration.interfaces.ErrorCode;
 
-public enum TreeOperationException implements ErrorCode {
+public enum TreeOperationErrorCode implements ErrorCode {
     NODE_ADD_EXCEPTION(1, "Error while adding the node."),
     NODE_DELETE_EXCEPTION(2, "Error while deleting the node."),
     NODE_NOT_FOUND_EXCEPTION(3, "Node not found exception.");
@@ -11,7 +11,7 @@ public enum TreeOperationException implements ErrorCode {
     private int errorCode;
     private String errorMessage;
 
-    TreeOperationException(int errorCode, String errorMessage) {
+    TreeOperationErrorCode(int errorCode, String errorMessage) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }

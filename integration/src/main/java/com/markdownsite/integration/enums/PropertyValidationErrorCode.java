@@ -2,19 +2,16 @@ package com.markdownsite.integration.enums;
 
 import com.markdownsite.integration.interfaces.ErrorCode;
 
-public enum SourceNotFoundException implements ErrorCode {
+public enum PropertyValidationErrorCode implements ErrorCode {
+    INVALID_PROPERTY(1, "Invalid property value. Property validation failed.");
 
-    SOURCE_NOT_FOUND_EXCEPTION(1, "No valid source found."),
-    SOURCE_NOT_CONFIGURED_EXCEPTION(2, "No valid source configured.");
-
-    private int errorCode;
-    private String errorMessage;
-
-
-    SourceNotFoundException(int errorCode, String errorMessage) {
+    PropertyValidationErrorCode(int errorCode, String errorMessage) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }
+
+    private int errorCode;
+    private String errorMessage;
 
     @Override
     public String getExceptionId() {
@@ -23,11 +20,11 @@ public enum SourceNotFoundException implements ErrorCode {
 
     @Override
     public int getErrorCode() {
-        return errorCode;
+        return this.errorCode;
     }
 
     @Override
     public String getErrorMessage() {
-        return errorMessage;
+        return this.errorMessage;
     }
 }

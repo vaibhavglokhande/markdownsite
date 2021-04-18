@@ -1,7 +1,9 @@
 package com.markdownsite.integration.interfaces;
 
+import com.markdownsite.integration.exceptions.AbstractException;
+import com.markdownsite.integration.exceptions.PropertyValidationException;
 import com.markdownsite.integration.models.MarkdownElement;
-import com.markdownsite.integration.models.SourceProviderConfig;
+import com.markdownsite.integration.models.SourceProviderConfigProperty;
 
 import java.util.Map;
 
@@ -13,6 +15,14 @@ import java.util.Map;
  * @param <T> the type parameter
  */
 public interface MarkdownSource<T> {
+
+    /**
+     * Initialize the source.
+     * This method is called before using the source to render the markdown.
+     *
+     * @throws AbstractException the abstract exception
+     */
+    void initializeSource() throws AbstractException;
 
     /**
      * Gets markdown source element based on the passed identifier.
@@ -32,16 +42,18 @@ public interface MarkdownSource<T> {
     /**
      * Returns the configuration for the source.
      *
+     * @param <G> the type parameter
      * @return the source config
      */
-    SourceProviderConfig getSourceConfig();
+    <G> Map<String, SourceProviderConfigProperty<G>> getSourceConfig();
 
     /**
      * Update source config.
      *
      * @param sourceProviderConfig the source provider config
+     * @throws PropertyValidationException the property validation exception
      */
-    void updateSourceConfig(SourceProviderConfig sourceProviderConfig);
+    void updateSourceConfig(Map<String, SourceProviderConfigProperty> sourceProviderConfig) throws PropertyValidationException;
 
     /**
      * Source identifier string.
