@@ -8,8 +8,7 @@ import com.markdownsite.integration.interfaces.TreeTraverseMode;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -65,25 +64,56 @@ public class SimpleTree<T extends Node<G>, G> implements Tree<T, G> {
     }
 
     @Override
-    public List<T> traverse(T node, TreeTraverseMode simpleTraverseMode) {
-        throw new RuntimeException("Method not yet implemented.");
+    public List<T> traverse(T node, TreeTraverseMode simpleTraverseMode) throws TreeOperationException {
+        Assert.notNull(node, "Traversal node cannot be null");
+        Assert.notNull(simpleTraverseMode, "Traversal mode cannot be null.");
+        if (SimpleTraverseMode.BREADTH_FIRST.equals(simpleTraverseMode)) {
+            return breadthFirstTravel(node);
+        }
+        if (SimpleTraverseMode.DEPTH_FIRST.equals(simpleTraverseMode)) {
+            return depthFirstTravel(node, simpleTraverseMode);
+        }
+        throw new TreeOperationException(TreeOperationErrorCode.TRAVERSAL_MODE_NOT_SUPPORTED);
+    }
+
+    private List<T> depthFirstTravel(T node, TreeTraverseMode simpleTraverseMode) throws TreeOperationException {
+        List<T> nodeList = new ArrayList<>();
+        nodeList.add(node);
+        if (!node.getChildren().isEmpty()) {
+            for (Node<G> childNode : node.getChildren()) {
+                nodeList.addAll(traverse((T) childNode, simpleTraverseMode));
+            }
+        }
+        return nodeList;
+    }
+
+    private List<T> breadthFirstTravel(T node) {
+        List<T> nodeList = new ArrayList<>();
+        Queue<T> travelQueue = new ArrayDeque<>();
+        travelQueue.add(node);
+        while (!travelQueue.isEmpty()) {
+            T visitedNode = travelQueue.remove();
+            nodeList.add(visitedNode);
+            if (!visitedNode.getChildren().isEmpty())
+                travelQueue.addAll((Collection<? extends T>) visitedNode.getChildren());
+        }
+        return nodeList;
     }
 
     @Override
     public T search(G value) {
-        throw new RuntimeException("Method not yet implemented.");
+        return search(node -> node.getValue().equals(value));
     }
 
     @Override
     public T search(Predicate<T> predicate) {
-        boolean present = predicate.test(rootNode);
-        if(present)
-            return rootNode;
-        return null;
+        List<T> nodeList = breadthFirstTravel(rootNode);
+        Optional<T> searchedOptional = nodeList.stream().filter(predicate::test).findFirst();
+        return searchedOptional.orElse(null);
     }
 
     @Override
-    public Stream<T> stream() {
+    public Stream<T> stream() throws TreeOperationException {
         return traverse(rootNode, SimpleTraverseMode.BREADTH_FIRST).stream();
     }
 

@@ -87,7 +87,7 @@ public interface Tree<T, G> {
      *
      * @return the stream
      */
-    Stream<T> stream();
+    Stream<T> stream() throws TreeOperationException;
 
     /**
      * Delete the given node from the tree.
