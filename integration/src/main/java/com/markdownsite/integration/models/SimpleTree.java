@@ -1,6 +1,5 @@
 package com.markdownsite.integration.models;
 
-import com.google.gson.Gson;
 import com.markdownsite.integration.enums.TreeOperationErrorCode;
 import com.markdownsite.integration.exceptions.TreeOperationException;
 import com.markdownsite.integration.interfaces.SimpleTraverseMode;
@@ -11,7 +10,6 @@ import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
