@@ -3,6 +3,7 @@ package com.markdownsite.integration.models;
 import com.google.gson.Gson;
 import com.markdownsite.integration.enums.TreeOperationErrorCode;
 import com.markdownsite.integration.exceptions.TreeOperationException;
+import com.markdownsite.integration.interfaces.SimpleTraverseMode;
 import com.markdownsite.integration.interfaces.Tree;
 import com.markdownsite.integration.interfaces.TreeTraverseMode;
 import lombok.Getter;
@@ -10,6 +11,9 @@ import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * SimpleNavigableTree provides a simple data structure with hierarchical relationship of nodes.
@@ -70,6 +74,19 @@ public class SimpleTree<T extends Node<G>, G> implements Tree<T, G> {
     @Override
     public T search(G value) {
         throw new RuntimeException("Method not yet implemented.");
+    }
+
+    @Override
+    public T search(Predicate<T> predicate) {
+        boolean present = predicate.test(rootNode);
+        if(present)
+            return rootNode;
+        return null;
+    }
+
+    @Override
+    public Stream<T> stream() {
+        return traverse(rootNode, SimpleTraverseMode.BREADTH_FIRST).stream();
     }
 
     /**

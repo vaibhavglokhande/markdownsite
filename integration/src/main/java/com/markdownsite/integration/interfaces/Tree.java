@@ -3,6 +3,8 @@ package com.markdownsite.integration.interfaces;
 import com.markdownsite.integration.exceptions.TreeOperationException;
 
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * The interface Navigable tree.
@@ -66,10 +68,26 @@ public interface Tree<T, G> {
      * Search the node based on the passed value.
      *
      * @param value the value to be searched
-     * @return the Node.
+     * @return the Node, null if not present.
      * @throws TreeOperationException the tree operation exception
      */
     T search(G value) throws TreeOperationException;
+
+    /**
+     * Search the node based on the predicate provided by the consumer.
+     *
+     * @param predicate the predicate
+     * @return the t
+     * @throws TreeOperationException the tree operation exception
+     */
+    T search(Predicate<T> predicate);
+
+    /**
+     * Provides the stream for the data structure
+     *
+     * @return the stream
+     */
+    Stream<T> stream();
 
     /**
      * Delete the given node from the tree.

@@ -1,6 +1,7 @@
 package com.markdownsite.core;
 
 import com.markdownsite.core.exceptions.FileBasedMarkdownSourceException;
+import com.markdownsite.core.utility.FileBasedSourceUtility;
 import com.markdownsite.integration.enums.PropertyValidationErrorCode;
 import com.markdownsite.integration.exceptions.PropertyValidationException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
@@ -35,65 +36,8 @@ public class FileBasedMarkdownSource implements MarkdownSource<String> {
         SourceProviderConfigProperty<String> sourceDirectoryProperty = sourceProviderConfig.get(PROPERTY_SOURCE_DIR);
         if (sourceDirectoryProperty == null || sourceDirectoryProperty.getPropertyValue() == null)
             throw new FileBasedMarkdownSourceException(com.markdownsite.core.enums.FileBasedMarkdownSourceException.SOURCE_DIRECTORY_NOT_CONFIGURED);
-        buildTree(sourceDirectoryProperty.getPropertyValue());
-    }
-
-    private void buildTree(String rootDirectoryPath) {
-        File rootDirectory = new File(rootDirectoryPath);
-        FileNode rootNode = getFileNode(rootDirectory);
-        fileSimpleTree = new SimpleTree<>(rootNode);
-        buildSubTree(rootNode);
-
-    }
-
-    private void buildSubTree(FileNode fileNode) {
-        List<File> filesWithExtension = getFilesWithExtension(fileNode.getValue(), ALLOWED_SOURCE_EXTENSION);
-        // Add all the files with allowed extension.
-        for (File childFile : filesWithExtension) {
-            FileNode childNode = getFileNode(childFile);
-            fileSimpleTree.addNode(fileNode, childNode);
-        }
-        List<File> childDirectories = getChildDirectories(fileNode.getValue());
-        for (File childDirectory : childDirectories) {
-            FileNode directoryNode = getFileNode(childDirectory);
-            fileSimpleTree.addNode(fileNode, directoryNode);
-            buildSubTree(directoryNode);
-        }
-    }
-
-    private FileNode getFileNode(File childFile) {
-        FileNode childNode = new FileNode();
-        childNode.setIdentifier(UUID.nameUUIDFromBytes(childFile.getName().getBytes(StandardCharsets.UTF_8)).toString());
-        childNode.setValue(childFile);
-        return childNode;
-    }
-
-    private List<File> getChildDirectories(File file) {
-        return Arrays.stream(file.listFiles(File::isDirectory)).toList();
-    }
-
-    private List<File> getFilesWithExtension(File file, String... extensions) {
-        try (Stream<Path> walk = Files.walk(Paths.get(file.toURI()), 1)) {
-            return walk.filter(path -> !Files.isDirectory(path))
-                    .filter(path -> isEndWith(path.getFileName().toString(), extensions))
-                    .map(Path::toFile)
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
-            e.printStackTrace();
-            // TODO Add logging.
-        }
-        return Collections.emptyList();
-    }
-
-    private boolean isEndWith(String file, String... fileExtensions) {
-        boolean result = false;
-        for (String fileExtension : fileExtensions) {
-            if (file.endsWith(fileExtension)) {
-                result = true;
-                break;
-            }
-        }
-        return result;
+        FileBasedSourceUtility fileBasedSourceUtility = new FileBasedSourceUtility();
+        this.fileSimpleTree = fileBasedSourceUtility.buildTree(sourceDirectoryProperty.getPropertyValue(), ALLOWED_SOURCE_EXTENSION);
     }
 
     @Override
