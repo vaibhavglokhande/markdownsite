@@ -38,7 +38,7 @@ public class FileBasedSourceUtility {
         for (File childDirectory : childDirectories) {
             FileNode directoryNode = getFileNode(childDirectory);
             fileSimpleTree.addNode(fileNode, directoryNode);
-            buildSubTree(directoryNode);
+            buildSubTree(directoryNode, extensions);
         }
     }
 

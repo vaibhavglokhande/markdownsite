@@ -4,13 +4,22 @@ import com.markdownsite.core.exceptions.FileBasedMarkdownSourceException;
 import com.markdownsite.core.utility.FileBasedSourceUtility;
 import com.markdownsite.integration.enums.PropertyValidationErrorCode;
 import com.markdownsite.integration.exceptions.PropertyValidationException;
+import com.markdownsite.integration.exceptions.TreeOperationException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
+import com.markdownsite.integration.interfaces.SimpleTraverseMode;
 import com.markdownsite.integration.models.*;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class FileBasedMarkdownSource implements MarkdownSource<String> {
@@ -22,25 +31,46 @@ public class FileBasedMarkdownSource implements MarkdownSource<String> {
     public static final String IDENTIFIER = FileBasedMarkdownSource.class.getName();
     public static final String PROPERTY_SOURCE_DIR = "sourceDirectory";
     private Map<String, SourceProviderConfigProperty<String>> sourceProviderConfig = new ConcurrentHashMap<>();
+    private Map<String, MarkdownElement<String>> markdownSourceMap = new ConcurrentHashMap<>();
 
 
     @Override
-    public void initializeSource() throws FileBasedMarkdownSourceException {
+    public void initializeSource() throws FileBasedMarkdownSourceException, TreeOperationException {
         SourceProviderConfigProperty<String> sourceDirectoryProperty = sourceProviderConfig.get(PROPERTY_SOURCE_DIR);
         if (sourceDirectoryProperty == null || sourceDirectoryProperty.getPropertyValue() == null)
             throw new FileBasedMarkdownSourceException(com.markdownsite.core.enums.FileBasedMarkdownSourceException.SOURCE_DIRECTORY_NOT_CONFIGURED);
         FileBasedSourceUtility fileBasedSourceUtility = new FileBasedSourceUtility();
         this.fileSimpleTree = fileBasedSourceUtility.buildTree(sourceDirectoryProperty.getPropertyValue(), ALLOWED_SOURCE_EXTENSION);
+        buildSource();
+    }
+
+    private void buildSource() throws TreeOperationException {
+        List<FileNode> fileNodes = fileSimpleTree.traverse(fileSimpleTree.getRootNode(), SimpleTraverseMode.BREADTH_FIRST);
+        for (FileNode fileNode : fileNodes) {
+            MarkdownElement<String> markdownElement = new MarkdownElement<>();
+            markdownElement.setTitle(fileNode.getValue().getName());
+            String identifier = UUID.nameUUIDFromBytes(fileNode.getValue().getAbsolutePath().getBytes(StandardCharsets.UTF_8)).toString();
+            markdownElement.setIdentifier(identifier);
+            File value = fileNode.getValue();
+            try (Stream<String> lines = Files.lines(value.toPath())) {
+                String content = lines.collect(Collectors.joining(System.lineSeparator()));
+                markdownElement.setContent(content);
+            } catch (IOException e) {
+                e.printStackTrace();
+                //TODO Add logging
+            }
+            markdownSourceMap.put(identifier, markdownElement);
+        }
     }
 
     @Override
     public MarkdownElement<String> getMarkdownElement(String identifier) {
-        return null;
+        return markdownSourceMap.get(identifier);
     }
 
     @Override
     public Map<String, MarkdownElement<String>> getAll() {
-        return null;
+        return markdownSourceMap;
     }
 
     @Override
