@@ -7,5 +7,5 @@ package com.markdownsite.integration.interfaces;
  *
  * @param <T> the type parameter
  */
-public interface NavigableMarkdownSource<T> extends MarkdownSource<T> {
+public interface NavigableMarkdownSource<T, G> extends MarkdownSource<T, G> {
 }

@@ -35,7 +35,7 @@ class MarkdownSourceProviderTest {
 
     @Test
     void testNoSourceConfiguredException() {
-        MarkdownSourceProvider markdownSourceProvider = new MarkdownSourceProvider();
+        MarkdownSourceProvider markdownSourceProvider = new MarkdownSourceProvider(null);
         SourceNotFoundException sourceNotFoundException = assertThrows(SourceNotFoundException.class, () -> markdownSourceProvider.getSource("invalid"));
         assertEquals(SourceNotFoundErrorCode.SOURCE_NOT_CONFIGURED_EXCEPTION, sourceNotFoundException.getErrorCode());
     }
@@ -44,10 +44,10 @@ class MarkdownSourceProviderTest {
     static class MarkdonwSourceProviderTestConfig {
 
         @Bean
-        public Set<MarkdownSource<?>> getMarkdownSources() {
-            Set<MarkdownSource<?>> markdownSources = new HashSet<>();
+        public Set<MarkdownSource<?,?>> getMarkdownSources() {
+            Set<MarkdownSource<?,?>> markdownSources = new HashSet<>();
 
-            MarkdownSource<?> markdownSource = Mockito.mock(MarkdownSource.class);
+            MarkdownSource<?,?> markdownSource = Mockito.mock(MarkdownSource.class);
             Mockito.when(markdownSource.sourceIdentifier()).thenReturn("mock-source");
             markdownSources.add(markdownSource);
 
@@ -56,7 +56,7 @@ class MarkdownSourceProviderTest {
 
         @Bean
         public MarkdownSourceProvider getMarkdownSourceProvider() {
-            return new MarkdownSourceProvider();
+            return new MarkdownSourceProvider(getMarkdownSources());
         }
 
     }

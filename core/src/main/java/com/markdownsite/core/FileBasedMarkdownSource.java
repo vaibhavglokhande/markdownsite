@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class FileBasedMarkdownSource implements MarkdownSource<String> {
+public class FileBasedMarkdownSource implements MarkdownSource<String, String> {
 
     public static final String ALLOWED_SOURCE_EXTENSION = ".md";
     private SimpleTree<FileNode, File> fileSimpleTree;
@@ -79,10 +79,9 @@ public class FileBasedMarkdownSource implements MarkdownSource<String> {
     }
 
     @Override
-    public void updateSourceConfig(Map<String, SourceProviderConfigProperty> sourceProviderConfig) throws PropertyValidationException {
-        ConcurrentHashMap mapToUpdate = new ConcurrentHashMap<>(sourceProviderConfig);
-        validateProperties(mapToUpdate);
-        this.sourceProviderConfig = mapToUpdate;
+    public void updateSourceConfig(Map<String, SourceProviderConfigProperty<String>> sourceProviderConfig) throws PropertyValidationException {
+        validateProperties(sourceProviderConfig);
+        this.sourceProviderConfig = sourceProviderConfig;
     }
 
     @Override

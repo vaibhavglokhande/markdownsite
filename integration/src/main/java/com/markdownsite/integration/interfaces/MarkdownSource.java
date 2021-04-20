@@ -12,9 +12,10 @@ import java.util.Map;
  * This interface should be implemented by the service that provides the markdown content source.
  * Each markdown element is identified by unique identifier
  *
- * @param <T> the type parameter
+ * @param <T> the type parameter for the source content type
+ * @param <G> the type parameter for the source identifier type
  */
-public interface MarkdownSource<T> {
+public interface MarkdownSource<T, G> {
 
     /**
      * Initialize the source.
@@ -37,7 +38,7 @@ public interface MarkdownSource<T> {
      *
      * @return the all
      */
-    Map<T, MarkdownElement<T>> getAll();
+    Map<G, MarkdownElement<T>> getAll();
 
     /**
      * Returns the configuration for the source.
@@ -45,7 +46,7 @@ public interface MarkdownSource<T> {
      * @param <G> the type parameter
      * @return the source config
      */
-    <G> Map<String, SourceProviderConfigProperty<G>> getSourceConfig();
+     Map<String, SourceProviderConfigProperty<G>> getSourceConfig();
 
     /**
      * Update source config.
@@ -53,7 +54,7 @@ public interface MarkdownSource<T> {
      * @param sourceProviderConfig the source provider config
      * @throws PropertyValidationException the property validation exception
      */
-    void updateSourceConfig(Map<String, SourceProviderConfigProperty> sourceProviderConfig) throws PropertyValidationException;
+    void updateSourceConfig(Map<String, SourceProviderConfigProperty<G>> sourceProviderConfig) throws PropertyValidationException;
 
     /**
      * Source identifier string.
