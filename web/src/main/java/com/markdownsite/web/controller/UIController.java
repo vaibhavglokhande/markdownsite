@@ -43,17 +43,17 @@ public class UIController {
     @GetMapping(path = "/docs/{*docId}")
     public String renderDoc(@PathVariable String docId, Model model) throws AbstractException {
         RenderEngine renderEngine = renderEngineFactory.getRenderEngine(renderEngineUUID);
-        MarkdownSource<FileBasedMarkdownSource> source = (MarkdownSource<FileBasedMarkdownSource>) markdownSourceProvider.getSource(FileBasedMarkdownSource.IDENTIFIER);
+        MarkdownSource source = markdownSourceProvider.getSource(FileBasedMarkdownSource.IDENTIFIER);
         List<SourceProviderConfigProperty> sourceProviderConfig = new ArrayList<>();
         Path path = Paths.get("core", "src", "test", "resources", "markdown-files");
         SourceProviderConfigProperty<String> configProperty = new SourceProviderConfigProperty<>(FileBasedMarkdownSource.PROPERTY_SOURCE_DIR, path.toString());
         sourceProviderConfig.add(configProperty);
         source.updateSourceConfig(sourceProviderConfig);
         source.initializeSource();
-        Map<String, MarkdownElement<FileBasedMarkdownSource>> allSources = source.getAll();
+        Map<String, MarkdownElement<String>> allSources = source.getAll();
         StringBuilder stringBuilder = new StringBuilder();
-        for (Map.Entry<String, MarkdownElement<FileBasedMarkdownSource>> entry : allSources.entrySet()) {
-            MarkdownElement<FileBasedMarkdownSource> fileBasedMarkdownSourceMarkdownElement = entry.getValue();
+        for (Map.Entry<String, MarkdownElement<String>> entry : allSources.entrySet()) {
+            MarkdownElement<String> fileBasedMarkdownSourceMarkdownElement = entry.getValue();
             stringBuilder.append(renderEngine.render(fileBasedMarkdownSourceMarkdownElement.getContent()))
                     .append("\n");
         }

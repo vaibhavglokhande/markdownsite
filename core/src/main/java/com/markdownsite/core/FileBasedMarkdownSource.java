@@ -1,5 +1,6 @@
 package com.markdownsite.core;
 
+import com.markdownsite.core.enums.FileBasedMarkdownSourceErrorCode;
 import com.markdownsite.core.exceptions.FileBasedMarkdownSourceException;
 import com.markdownsite.core.utility.FileBasedSourceUtility;
 import com.markdownsite.integration.enums.PropertyValidationErrorCode;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class FileBasedMarkdownSource implements NavigableMarkdownSource<String> {
+public class FileBasedMarkdownSource implements NavigableMarkdownSource {
 
     public static final String ALLOWED_SOURCE_EXTENSION = ".md";
     private SimpleTree<FileNode, File> fileSimpleTree;
@@ -38,7 +39,7 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource<String> 
     public void initializeSource() throws FileBasedMarkdownSourceException, TreeOperationException {
         SourceProviderConfigProperty sourceDirectoryProperty = sourceProviderConfig.stream().filter(property -> property.getPropertyName().equals(FileBasedMarkdownSource.PROPERTY_SOURCE_DIR)).findFirst().orElse(null);
         if (sourceDirectoryProperty == null || sourceDirectoryProperty.getPropertyValue() == null)
-            throw new FileBasedMarkdownSourceException(com.markdownsite.core.enums.FileBasedMarkdownSourceException.SOURCE_DIRECTORY_NOT_CONFIGURED);
+            throw new FileBasedMarkdownSourceException(FileBasedMarkdownSourceErrorCode.SOURCE_DIRECTORY_NOT_CONFIGURED);
         FileBasedSourceUtility fileBasedSourceUtility = new FileBasedSourceUtility();
         this.fileSimpleTree = fileBasedSourceUtility.buildTree((String) sourceDirectoryProperty.getPropertyValue(), ALLOWED_SOURCE_EXTENSION);
         buildSource();

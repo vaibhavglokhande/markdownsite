@@ -44,10 +44,10 @@ class MarkdownSourceProviderTest {
     static class MarkdonwSourceProviderTestConfig {
 
         @Bean
-        public Set<MarkdownSource<?>> getMarkdownSources() {
-            Set<MarkdownSource<?>> markdownSources = new HashSet<>();
+        public Set<MarkdownSource> getMarkdownSources() {
+            Set<MarkdownSource> markdownSources = new HashSet<>();
 
-            MarkdownSource<?> markdownSource = Mockito.mock(MarkdownSource.class);
+            MarkdownSource markdownSource = Mockito.mock(MarkdownSource.class);
             Mockito.when(markdownSource.sourceIdentifier()).thenReturn("mock-source");
             markdownSources.add(markdownSource);
 

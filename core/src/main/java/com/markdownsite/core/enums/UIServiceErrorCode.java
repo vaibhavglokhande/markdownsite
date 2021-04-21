@@ -2,10 +2,10 @@ package com.markdownsite.core.enums;
 
 import com.markdownsite.integration.interfaces.ErrorCode;
 
-public enum FileBasedMarkdownSourceException implements ErrorCode {
-    SOURCE_DIRECTORY_NOT_CONFIGURED(1, "Valid source directory not configured.");
+public enum UIServiceErrorCode implements ErrorCode {
+    NAVIGABLE_SOURCE_NOT_CONFIGURED(1, "No valid, navigable source configured.");
 
-    FileBasedMarkdownSourceException(int errorCode, String errorMessage) {
+    UIServiceErrorCode(int errorCode, String errorMessage) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }
@@ -20,11 +20,11 @@ public enum FileBasedMarkdownSourceException implements ErrorCode {
 
     @Override
     public int getErrorCode() {
-        return this.errorCode;
+        return errorCode;
     }
 
     @Override
     public String getErrorMessage() {
-        return this.errorMessage;
+        return errorMessage;
     }
 }

@@ -13,9 +13,8 @@ import java.util.Map;
  * This interface should be implemented by the service that provides the markdown content source.
  * Each markdown element is identified by unique identifier
  *
- * @param <T> the type parameter for the source element identifier type
  */
-public interface MarkdownSource<T> {
+public interface MarkdownSource {
 
     /**
      * Initialize the source.
@@ -31,14 +30,14 @@ public interface MarkdownSource<T> {
      * @param identifier the identifier
      * @return the markdown source
      */
-    MarkdownElement<T> getMarkdownElement(T identifier);
+    MarkdownElement<String> getMarkdownElement(String identifier);
 
     /**
      * Provide the map of all the markdown source elements identified by their unique identifier.
      *
      * @return the all
      */
-    Map<String, MarkdownElement<T>> getAll();
+    Map<String, MarkdownElement<String>> getAll();
 
     /**
      * Returns the configuration for the source.

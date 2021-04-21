@@ -24,6 +24,10 @@ public class RenderEngineFactory {
         return engineOptional.orElse(null);
     }
 
+    public RenderEngine getConfiguredRenderEngine(){
+        return getRenderEngine("9971ea80-dec5-3154-af52-771b08068b97");
+    }
+
     public synchronized void addRenderEngine(RenderEngine renderEngine){
         this.renderEngines.add(renderEngine);
     }

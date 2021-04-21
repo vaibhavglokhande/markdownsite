@@ -10,7 +10,7 @@ import com.markdownsite.integration.models.SourceNavigationNode;
  * It provides a hierarchical structure to navigate through different {@link com.markdownsite.integration.models.MarkdownElement}
  *
  */
-public interface NavigableMarkdownSource<T> extends MarkdownSource<T> {
+public interface NavigableMarkdownSource extends MarkdownSource {
     /**
      * Provides the tree to build the navigation tree.
      *
