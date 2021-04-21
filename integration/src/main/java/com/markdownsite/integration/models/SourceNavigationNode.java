@@ -8,11 +8,7 @@ import lombok.Data;
  * @param <T> the type parameter for type of MarkdownElement
  */
 @Data
-public class SourceNavigationNode<T> extends Node<String>{
-    /**
-     * The Markdown element.
-     */
-    private MarkdownElement<T> markdownElement;
+public class SourceNavigationNode extends Node<String>{
     /**
      * The Is directory.
      */

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FileBasedMarkdownSourceTest {
 
     @Autowired
-    private MarkdownSource<String, String> markdownSource;
+    private MarkdownSource<String> markdownSource;
 
     @Test
     void sourceIdentifier() {

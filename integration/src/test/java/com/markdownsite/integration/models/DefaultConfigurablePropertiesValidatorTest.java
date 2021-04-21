@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultConfigurablePropertiesValidatorTest {
     @Test
     void testValidateProperty() {
-        ConfigurablePropertiesValidator<String> propertiesValidator = new DefaultConfigurablePropertiesValidator();
+        ConfigurablePropertiesValidator propertiesValidator = new DefaultConfigurablePropertiesValidator();
         assertTrue(propertiesValidator.validateProperty("rule-1", getRulesDenyCustom()));
         assertTrue(propertiesValidator.validateProperty("rule-2", getRulesDenyCustom()));
         assertFalse(propertiesValidator.validateProperty("custom-rule", getRulesDenyCustom()));
@@ -17,14 +17,14 @@ class DefaultConfigurablePropertiesValidatorTest {
 
     @Test
     void testValidateAllowCustom() {
-        ConfigurablePropertiesValidator<String> propertiesValidator = new DefaultConfigurablePropertiesValidator();
+        ConfigurablePropertiesValidator propertiesValidator = new DefaultConfigurablePropertiesValidator();
         assertTrue(propertiesValidator.validateProperty("custom-rule", new ConfigurablePropertiesRules<String>(true, Arrays.asList(new Rule<>("rule-1", new TestStringValidator())))));
     }
 
 
     @Test
     void testValidateDefault() {
-        ConfigurablePropertiesValidator<String> propertiesValidator = new DefaultConfigurablePropertiesValidator();
+        ConfigurablePropertiesValidator propertiesValidator = new DefaultConfigurablePropertiesValidator();
         assertTrue(propertiesValidator.validateProperty("custom", new ConfigurablePropertiesRules<>()));
     }
 

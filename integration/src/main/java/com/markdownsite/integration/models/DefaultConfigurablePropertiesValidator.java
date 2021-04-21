@@ -2,9 +2,9 @@ package com.markdownsite.integration.models;
 
 import java.util.Optional;
 
-public class DefaultConfigurablePropertiesValidator<T> implements ConfigurablePropertiesValidator<T> {
+public class DefaultConfigurablePropertiesValidator implements ConfigurablePropertiesValidator {
     @Override
-    public boolean validateProperty(T property, ConfigurablePropertiesRules<T> configurablePropertiesRules) {
+    public <T> boolean validateProperty(T property, ConfigurablePropertiesRules<T> configurablePropertiesRules) {
         // Allow all the values if no rules are in place.
         if (configurablePropertiesRules == null || configurablePropertiesRules.getRules() == null)
             return true;

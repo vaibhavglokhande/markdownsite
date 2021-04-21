@@ -102,13 +102,9 @@ class SimpleTreeTest {
 
         SimpleTree<Node<String>, String> nodeStringTree = (SimpleTree<Node<String>, String>) buildTestTree(rootNode);
         long originalTreeSize = nodeStringTree.stream().count();
-        Tree<SourceNavigationNode<Integer>, String> convert = nodeStringTree.convert(stringNode -> {
-            SourceNavigationNode<Integer> integerSourceNavigationNode = new SourceNavigationNode<>();
+        Tree<SourceNavigationNode, String> convert = nodeStringTree.convert(stringNode -> {
+            SourceNavigationNode integerSourceNavigationNode = new SourceNavigationNode();
             integerSourceNavigationNode.setValue(stringNode.getValue());
-            MarkdownElement<Integer> integerMarkdownElement = new MarkdownElement<>();
-            integerMarkdownElement.setIdentifier(1);
-            integerMarkdownElement.setContent("New Content");
-            integerSourceNavigationNode.setMarkdownElement(integerMarkdownElement);
             return integerSourceNavigationNode;
         });
         assertNotNull(convert);

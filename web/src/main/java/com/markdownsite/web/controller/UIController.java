@@ -7,7 +7,6 @@ import com.markdownsite.integration.exceptions.AbstractException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
 import com.markdownsite.integration.interfaces.RenderEngine;
 import com.markdownsite.integration.models.MarkdownElement;
-import com.markdownsite.integration.models.RenderEngineConfigProperty;
 import com.markdownsite.integration.models.SourceProviderConfigProperty;
 import com.markdownsite.integration.providers.MarkdownSourceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +15,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 public class UIController {
@@ -46,11 +43,11 @@ public class UIController {
     @GetMapping(path = "/docs/{*docId}")
     public String renderDoc(@PathVariable String docId, Model model) throws AbstractException {
         RenderEngine renderEngine = renderEngineFactory.getRenderEngine(renderEngineUUID);
-        MarkdownSource<FileBasedMarkdownSource, String> source = (MarkdownSource<FileBasedMarkdownSource, String>) markdownSourceProvider.getSource(FileBasedMarkdownSource.IDENTIFIER);
-        ConcurrentHashMap<String, SourceProviderConfigProperty<String>> sourceProviderConfig = new ConcurrentHashMap<>();
+        MarkdownSource<FileBasedMarkdownSource> source = (MarkdownSource<FileBasedMarkdownSource>) markdownSourceProvider.getSource(FileBasedMarkdownSource.IDENTIFIER);
+        List<SourceProviderConfigProperty> sourceProviderConfig = new ArrayList<>();
         Path path = Paths.get("core", "src", "test", "resources", "markdown-files");
         SourceProviderConfigProperty<String> configProperty = new SourceProviderConfigProperty<>(FileBasedMarkdownSource.PROPERTY_SOURCE_DIR, path.toString());
-        sourceProviderConfig.put(FileBasedMarkdownSource.PROPERTY_SOURCE_DIR, configProperty);
+        sourceProviderConfig.add(configProperty);
         source.updateSourceConfig(sourceProviderConfig);
         source.initializeSource();
         Map<String, MarkdownElement<FileBasedMarkdownSource>> allSources = source.getAll();

@@ -5,6 +5,7 @@ import com.markdownsite.integration.exceptions.PropertyValidationException;
 import com.markdownsite.integration.models.MarkdownElement;
 import com.markdownsite.integration.models.SourceProviderConfigProperty;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,10 +13,9 @@ import java.util.Map;
  * This interface should be implemented by the service that provides the markdown content source.
  * Each markdown element is identified by unique identifier
  *
- * @param <T> the type parameter for the source content type
- * @param <G> the type parameter for the source identifier type
+ * @param <T> the type parameter for the source element identifier type
  */
-public interface MarkdownSource<T, G> {
+public interface MarkdownSource<T> {
 
     /**
      * Initialize the source.
@@ -38,15 +38,14 @@ public interface MarkdownSource<T, G> {
      *
      * @return the all
      */
-    Map<G, MarkdownElement<T>> getAll();
+    Map<String, MarkdownElement<T>> getAll();
 
     /**
      * Returns the configuration for the source.
      *
-     * @param <G> the type parameter
      * @return the source config
      */
-     Map<String, SourceProviderConfigProperty<G>> getSourceConfig();
+     List<SourceProviderConfigProperty> getSourceConfig();
 
     /**
      * Update source config.
@@ -54,7 +53,7 @@ public interface MarkdownSource<T, G> {
      * @param sourceProviderConfig the source provider config
      * @throws PropertyValidationException the property validation exception
      */
-    void updateSourceConfig(Map<String, SourceProviderConfigProperty<G>> sourceProviderConfig) throws PropertyValidationException;
+    void updateSourceConfig(List<SourceProviderConfigProperty> sourceProviderConfig) throws PropertyValidationException;
 
     /**
      * Source identifier string.
