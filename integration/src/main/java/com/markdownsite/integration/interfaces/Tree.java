@@ -1,8 +1,10 @@
 package com.markdownsite.integration.interfaces;
 
 import com.markdownsite.integration.exceptions.TreeOperationException;
+import com.markdownsite.integration.models.Node;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -10,8 +12,8 @@ import java.util.stream.Stream;
  * The interface Navigable tree.
  * The implementation provides a tree data structure with navigation between nodes.
  *
- * @param <T> the type parameter
- * @param <G> the type parameter
+ * @param <T> the type parameter for node type
+ * @param <G> the type parameter for node content type
  */
 public interface Tree<T, G> {
 
@@ -86,6 +88,7 @@ public interface Tree<T, G> {
      * Provides the stream for the data structure
      *
      * @return the stream
+     * @throws TreeOperationException the tree operation exception
      */
     Stream<T> stream() throws TreeOperationException;
 
@@ -97,5 +100,15 @@ public interface Tree<T, G> {
      * @throws TreeOperationException the tree operation exception
      */
     void delete(T node) throws TreeOperationException;
+
+    /**
+     * Convert tree.
+     *
+     * @param <U>      the type parameter for the Node to convert to.
+     * @param <I>      the type parameter for the value type of the node.
+     * @param function the function
+     * @return the tree
+     */
+    <U, I> Tree<U, I> convert(Function<T, U> function) throws TreeOperationException;
 
 }

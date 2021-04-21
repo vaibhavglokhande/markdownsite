@@ -7,6 +7,7 @@ import com.markdownsite.integration.interfaces.Tree;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -92,6 +93,26 @@ class SimpleTreeTest {
         assertEquals("child-node-3", traversedList.get(2).getValue());
         assertEquals("child-node-2", traversedList.get(3).getValue());
         assertEquals("child-node-4", traversedList.get(4).getValue());
+    }
+
+    @Test
+    void testConvert() throws TreeOperationException {
+        Node<String> rootNode = new Node<>();
+        rootNode.setValue("root-node");
+
+        SimpleTree<Node<String>, String> nodeStringTree = (SimpleTree<Node<String>, String>) buildTestTree(rootNode);
+        long originalTreeSize = nodeStringTree.stream().count();
+        Tree<SourceNavigationNode<Integer>, String> convert = nodeStringTree.convert(stringNode -> {
+            SourceNavigationNode<Integer> integerSourceNavigationNode = new SourceNavigationNode<>();
+            integerSourceNavigationNode.setValue(stringNode.getValue());
+            MarkdownElement<Integer> integerMarkdownElement = new MarkdownElement<>();
+            integerMarkdownElement.setIdentifier(1);
+            integerMarkdownElement.setContent("New Content");
+            integerSourceNavigationNode.setMarkdownElement(integerMarkdownElement);
+            return integerSourceNavigationNode;
+        });
+        assertNotNull(convert);
+        assertEquals(originalTreeSize, convert.stream().count());
     }
 
     private Tree<Node<String>, String> buildTestTree(Node<String> rootNode) throws TreeOperationException {

@@ -9,6 +9,7 @@ import lombok.Getter;
 import org.springframework.util.Assert;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -139,6 +140,25 @@ public class SimpleTree<T extends Node<G>, G> implements Tree<T, G> {
 
         parent.getChildren().remove(node);
         node.setParent(null);
+    }
+
+    @Override
+    public <U, I> Tree<U, I> convert(Function<T, U> function) throws TreeOperationException {
+        U apply = function.apply(rootNode);
+        Assert.isAssignable(Node.class, apply.getClass());
+        Node<I> convertedRootNode = (Node<I>) apply;
+        Tree<Node<I>, I> simpleTree = new SimpleTree<>(convertedRootNode);
+        processChildren(rootNode, simpleTree, function, convertedRootNode);
+        return (Tree<U, I>) simpleTree;
+    }
+
+    private <I, U> void processChildren(T originalNode, Tree<Node<I>, I> simpleTree, Function<T, U> function, Node<I> convertedParentNode) throws TreeOperationException {
+        List<T> children = (List<T>) originalNode.getChildren();
+        for (T childNode : children) {
+            Node<I> convertedChildNode = (Node<I>) function.apply(childNode);
+            simpleTree.addNode(convertedParentNode, convertedChildNode);
+            processChildren(childNode, simpleTree, function, convertedChildNode);
+        }
     }
 
     private boolean isLeafNode(T node) {
