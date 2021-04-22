@@ -20,11 +20,20 @@ class FileBasedSourceUtilityTest {
     void buildTree() throws TreeOperationException {
         Path sourceDirectory = Paths.get("src", "test", "resources", "markdown-files");
         FileBasedSourceUtility fileBasedSourceUtility = new FileBasedSourceUtility();
-        SimpleTree<FileNode, File> simpleTree = fileBasedSourceUtility.buildTree(sourceDirectory.toString(), ".md");
+        SimpleTree<FileNode, File> simpleTree = fileBasedSourceUtility.buildTree(sourceDirectory.toString(), false, ".md");
         assertNotNull(simpleTree);
         assertEquals(2, simpleTree.getChildren(simpleTree.getRootNode()).size());
         List<FileNode> traverse = simpleTree.traverse(simpleTree.getRootNode(), SimpleTraverseMode.BREADTH_FIRST);
         assertEquals(6, traverse.size());
     }
 
+    @Test
+    void buildTreeFromClasspath() throws TreeOperationException {
+        FileBasedSourceUtility fileBasedSourceUtility = new FileBasedSourceUtility();
+        SimpleTree<FileNode, File> simpleTree = fileBasedSourceUtility.buildTree("markdown-files", true, ".md");
+        assertNotNull(simpleTree);
+        assertEquals(2, simpleTree.getChildren(simpleTree.getRootNode()).size());
+        List<FileNode> traverse = simpleTree.traverse(simpleTree.getRootNode(), SimpleTraverseMode.BREADTH_FIRST);
+        assertEquals(6, traverse.size());
+    }
 }

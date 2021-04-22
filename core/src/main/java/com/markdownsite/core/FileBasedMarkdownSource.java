@@ -31,6 +31,7 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource, Initial
 
     public static final String IDENTIFIER = FileBasedMarkdownSource.class.getName();
     public static final String PROPERTY_SOURCE_DIR = IDENTIFIER +".sourceDirectory";
+    public static final String READ_FROM_CLASSPATH = IDENTIFIER+".readFromClasspath";
     private List<SourceProviderConfigProperty> sourceProviderConfig = new ArrayList<>();
     private Map<String, MarkdownElement<String>> markdownSourceMap = new ConcurrentHashMap<>();
     private Tree<SourceNavigationNode, String> navigationTree;
@@ -39,10 +40,14 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource, Initial
     @Override
     public void initializeSource() throws FileBasedMarkdownSourceException, TreeOperationException {
         SourceProviderConfigProperty sourceDirectoryProperty = sourceProviderConfig.stream().filter(property -> property.getPropertyName().equals(FileBasedMarkdownSource.PROPERTY_SOURCE_DIR)).findFirst().orElse(null);
-        if (sourceDirectoryProperty == null || sourceDirectoryProperty.getPropertyValue() == null)
+        if (sourceDirectoryProperty == null)
             throw new FileBasedMarkdownSourceException(FileBasedMarkdownSourceErrorCode.SOURCE_DIRECTORY_NOT_CONFIGURED);
+        SourceProviderConfigProperty<Boolean> readFromClassPathProperty = sourceProviderConfig.stream().filter(property -> property.getPropertyName().equalsIgnoreCase(READ_FROM_CLASSPATH)).findFirst().orElse(null);
+        boolean readFromClasspath = false;
+        if(readFromClassPathProperty != null)
+            readFromClasspath = readFromClassPathProperty.getPropertyValue();
         FileBasedSourceUtility fileBasedSourceUtility = new FileBasedSourceUtility();
-        this.fileSimpleTree = fileBasedSourceUtility.buildTree((String) sourceDirectoryProperty.getPropertyValue(), ALLOWED_SOURCE_EXTENSION);
+        this.fileSimpleTree = fileBasedSourceUtility.buildTree((String) sourceDirectoryProperty.getPropertyValue(), readFromClasspath , ALLOWED_SOURCE_EXTENSION);
         buildSource();
         buildNavigationTree();
     }
@@ -123,7 +128,9 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource, Initial
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        SourceProviderConfigProperty<String> sourceProviderConfigProperty = new SourceProviderConfigProperty<>(PROPERTY_SOURCE_DIR, null);
+        SourceProviderConfigProperty<String> sourceProviderConfigProperty = new SourceProviderConfigProperty<>(PROPERTY_SOURCE_DIR, "");
         sourceProviderConfig.add(sourceProviderConfigProperty);
+        SourceProviderConfigProperty<Boolean> readFromClassPathConfigProperty = new SourceProviderConfigProperty<>(READ_FROM_CLASSPATH, false);
+        sourceProviderConfig.add(readFromClassPathConfigProperty);
     }
 }

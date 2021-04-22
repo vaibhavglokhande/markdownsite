@@ -2,6 +2,7 @@ package com.markdownsite.core.utility;
 
 import com.markdownsite.core.FileNode;
 import com.markdownsite.integration.models.SimpleTree;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,11 +17,30 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * The type File based source utility.
+ */
 public class FileBasedSourceUtility {
     private SimpleTree<FileNode, File> fileSimpleTree;
 
-    public SimpleTree<FileNode, File> buildTree(String rootDirectoryPath, String... extensions) {
+    /**
+     * Build tree simple tree.
+     *
+     * @param rootDirectoryPath the root directory path - The path to the source directory or classpath directory
+     * @param readFromClasspath the read from classpath - If set to true, the utility will optionally search for source in the classpath if provided path not found
+     * @param extensions        the extensions
+     * @return the simple tree
+     */
+    public SimpleTree<FileNode, File> buildTree(String rootDirectoryPath, boolean readFromClasspath, String... extensions) {
         File rootDirectory = new File(rootDirectoryPath);
+        if(!rootDirectory.exists() && readFromClasspath) {
+            ClassPathResource classPathResource = new ClassPathResource(rootDirectoryPath);
+            try {
+                rootDirectory = classPathResource.getFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         FileNode rootNode = getFileNode(rootDirectory);
         fileSimpleTree = new SimpleTree<>(rootNode);
         buildSubTree(rootNode, extensions);
@@ -50,7 +70,10 @@ public class FileBasedSourceUtility {
     }
 
     private List<File> getChildDirectories(File file) {
-        return Arrays.stream(file.listFiles(File::isDirectory)).toList();
+        File[] array = file.listFiles(File::isDirectory);
+        if(array != null)
+            return Arrays.stream(array).toList();
+        return Collections.emptyList();
     }
 
     private List<File> getFilesWithExtension(File file, String... extensions) {
