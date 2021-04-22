@@ -1,15 +1,17 @@
 package com.markdownsite.integration.models;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Builder
-public class SourceProviderConfigProperty<T>  {
+@EqualsAndHashCode(of = {"propertyName"})
+public class SourceProviderConfigProperty<T> {
     private String propertyName;
+    @NonNull
     private T propertyValue;
     private List<SourceProviderConfigProperty> childrenProperties;
     private ConfigurablePropertiesRules<T> configurablePropertiesRules;

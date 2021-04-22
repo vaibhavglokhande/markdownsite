@@ -10,6 +10,7 @@ import com.markdownsite.integration.interfaces.NavigableMarkdownSource;
 import com.markdownsite.integration.interfaces.SimpleTraverseMode;
 import com.markdownsite.integration.interfaces.Tree;
 import com.markdownsite.integration.models.*;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -22,14 +23,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class FileBasedMarkdownSource implements NavigableMarkdownSource {
+public class FileBasedMarkdownSource implements NavigableMarkdownSource, InitializingBean {
 
     public static final String ALLOWED_SOURCE_EXTENSION = ".md";
     private SimpleTree<FileNode, File> fileSimpleTree;
     private ConfigurablePropertiesValidator propertiesValidator = new DefaultConfigurablePropertiesValidator();
 
     public static final String IDENTIFIER = FileBasedMarkdownSource.class.getName();
-    public static final String PROPERTY_SOURCE_DIR = "sourceDirectory";
+    public static final String PROPERTY_SOURCE_DIR = IDENTIFIER +".sourceDirectory";
     private List<SourceProviderConfigProperty> sourceProviderConfig = new ArrayList<>();
     private Map<String, MarkdownElement<String>> markdownSourceMap = new ConcurrentHashMap<>();
     private Tree<SourceNavigationNode, String> navigationTree;
@@ -106,11 +107,6 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource {
         return IDENTIFIER;
     }
 
-    public void configFileSource(String rootDirectory) {
-        SourceProviderConfigProperty<String> sourceProviderConfigProperty = new SourceProviderConfigProperty<>(PROPERTY_SOURCE_DIR, rootDirectory);
-        sourceProviderConfig.add(sourceProviderConfigProperty);
-    }
-
     private void validateProperties(List<SourceProviderConfigProperty> sourceProviderConfig) throws PropertyValidationException {
         for (SourceProviderConfigProperty entry : sourceProviderConfig) {
             boolean validation = this.propertiesValidator.validateProperty(entry.getPropertyValue(), entry.getConfigurablePropertiesRules());
@@ -123,5 +119,11 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource {
     @Override
     public Tree<SourceNavigationNode, String> getNavigationTree() {
         return navigationTree;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        SourceProviderConfigProperty<String> sourceProviderConfigProperty = new SourceProviderConfigProperty<>(PROPERTY_SOURCE_DIR, null);
+        sourceProviderConfig.add(sourceProviderConfigProperty);
     }
 }

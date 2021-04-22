@@ -41,6 +41,7 @@ public interface MarkdownSource {
 
     /**
      * Returns the configuration for the source.
+     * Provide the empty implementation of all the required config properties by default.
      *
      * @return the source config
      */

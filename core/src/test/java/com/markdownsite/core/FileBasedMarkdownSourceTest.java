@@ -1,9 +1,11 @@
 package com.markdownsite.core;
 
 import com.markdownsite.core.exceptions.FileBasedMarkdownSourceException;
+import com.markdownsite.integration.exceptions.PropertyValidationException;
 import com.markdownsite.integration.exceptions.TreeOperationException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
 import com.markdownsite.integration.models.MarkdownElement;
+import com.markdownsite.integration.models.SourceProviderConfigProperty;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,19 +35,21 @@ class FileBasedMarkdownSourceTest {
     }
 
     @Test
-    void testInitialize() {
+    void testInitialize() throws PropertyValidationException {
         FileBasedMarkdownSource fileBasedMarkdownSource = (FileBasedMarkdownSource) markdownSource;
         Path sourceDirectory = Paths.get("src", "test", "resources", "markdown-files");
-        fileBasedMarkdownSource.configFileSource(sourceDirectory.toString());
+        SourceProviderConfigProperty sourceProviderConfigProperty = new SourceProviderConfigProperty<>(FileBasedMarkdownSource.PROPERTY_SOURCE_DIR, sourceDirectory.toString());
+        fileBasedMarkdownSource.updateSourceConfig(new ArrayList<>(){{add(sourceProviderConfigProperty);}});
         // No exception should be generated.
         assertDoesNotThrow(fileBasedMarkdownSource::initializeSource);
     }
 
     @Test
-    void testGetMarkdownElement() throws TreeOperationException, FileBasedMarkdownSourceException, IOException {
+    void testGetMarkdownElement() throws TreeOperationException, FileBasedMarkdownSourceException, IOException, PropertyValidationException {
         FileBasedMarkdownSource fileBasedMarkdownSource = (FileBasedMarkdownSource) markdownSource;
         Path sourceDirectory = Paths.get("src", "test", "resources", "markdown-files");
-        fileBasedMarkdownSource.configFileSource(sourceDirectory.toString());
+        SourceProviderConfigProperty sourceProviderConfigProperty = new SourceProviderConfigProperty<>(FileBasedMarkdownSource.PROPERTY_SOURCE_DIR, sourceDirectory.toString());
+        fileBasedMarkdownSource.updateSourceConfig(new ArrayList<>(){{add(sourceProviderConfigProperty);}});
         fileBasedMarkdownSource.initializeSource();
         Optional<File> file = Files.walk(sourceDirectory).filter(path -> path.endsWith("File1.md")).map(Path::toFile).findFirst();
         String identifier = UUID.nameUUIDFromBytes(file.get().getAbsolutePath().getBytes(StandardCharsets.UTF_8)).toString();
@@ -57,10 +59,11 @@ class FileBasedMarkdownSourceTest {
     }
 
     @Test
-    void testGetAllMarkdownElements() throws TreeOperationException, FileBasedMarkdownSourceException {
+    void testGetAllMarkdownElements() throws TreeOperationException, FileBasedMarkdownSourceException, PropertyValidationException {
         FileBasedMarkdownSource fileBasedMarkdownSource = (FileBasedMarkdownSource) markdownSource;
         Path sourceDirectory = Paths.get("src", "test", "resources", "markdown-files");
-        fileBasedMarkdownSource.configFileSource(sourceDirectory.toString());
+        SourceProviderConfigProperty sourceProviderConfigProperty = new SourceProviderConfigProperty<>(FileBasedMarkdownSource.PROPERTY_SOURCE_DIR, sourceDirectory.toString());
+        fileBasedMarkdownSource.updateSourceConfig(new ArrayList<>(){{add(sourceProviderConfigProperty);}});
         fileBasedMarkdownSource.initializeSource();
         Map<String, MarkdownElement<String>> markdownSourceAll = fileBasedMarkdownSource.getAll();
         assertEquals(6, markdownSourceAll.size());
