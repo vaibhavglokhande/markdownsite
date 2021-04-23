@@ -18,12 +18,17 @@ public class DefaultResourceProvider implements ResourceProvider {
 
     @Override
     public Set<String> getJsResources() {
-        return getResources(ResourceConfig::getJsResources);
+        Set<String> resources = getResources(ResourceConfig::getJsResources);
+        resources.add("https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js");
+        return resources;
     }
 
     @Override
     public Set<String> getCssResources() {
-       return getResources(ResourceConfig::getCssResources);
+        Set<String> resources = getResources(ResourceConfig::getCssResources);
+        resources.add("https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css");
+        resources.add("https://fonts.googleapis.com/icon?family=Material+Icons");
+        return resources;
     }
 
     @Override
@@ -39,7 +44,7 @@ public class DefaultResourceProvider implements ResourceProvider {
     private Set<String> getResources(Function<ResourceConfig, List<String>> extractResource) {
         Set<String> jsResources = new HashSet<>();
 
-        if(!resourceConfigList.isEmpty())
+        if (!resourceConfigList.isEmpty())
             resourceConfigList.forEach(resourceConfig -> {
                 List<String> configJsResources = extractResource.apply(resourceConfig);
                 if (configJsResources != null && !configJsResources.isEmpty())

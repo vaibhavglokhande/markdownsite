@@ -17,6 +17,14 @@ import java.util.stream.Stream;
  */
 public interface Tree<T, G> {
 
+
+    /**
+     * Gets root node.
+     *
+     * @return the root node
+     */
+    T getRootNode();
+
     /**
      * Gets the parent of the current node.
      *
@@ -108,6 +116,7 @@ public interface Tree<T, G> {
      * @param <I>      the type parameter for the value type of the node.
      * @param function the function
      * @return the tree
+     * @throws TreeOperationException the tree operation exception
      */
     <U, I> Tree<U, I> convert(Function<T, U> function) throws TreeOperationException;
 

@@ -14,6 +14,27 @@
     </th:block>
 </head>
 <body>
+<ul id="slide-out" class="sidenav sidenav-fixed">
+    <li>
+        <div class="user-view">
+            <div class="background">
+                <img src="https://images3.alphacoders.com/114/1142597.jpg" width="100%">
+            </div>
+            <a href="#user"><img class="circle" src="https://avatarfiles.alphacoders.com/893/89303.gif" alt="image"></a>
+            <a href="#name"><span class="white-text name">User</span></a>
+            <a href="#email"><span class="white-text email">user@mail.it</span></a>
+        </div>
+    </li>
+    <th:block th:each="node: ${nodes}">
+        <li th:replace="fragments/nav :: navFragment(${node})">
+        </li>
+        <li>
+            <div class="divider"></div>
+        </li>
+    </th:block>
+</ul>
+<a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
 <div class="container" th:utext="${markdownRender}">
 </div>
 
@@ -23,5 +44,11 @@
 <th:block th:each="src: ${inlineScript}">
     <div th:replace="fragments/links :: inlineScriptFragment (${src})"></div>
 </th:block>
+
+<script>
+  $(document).ready(function(){
+    $('.sidenav').sidenav();
+  });
+</script>
 </body>
 </html>
