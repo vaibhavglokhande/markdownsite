@@ -30,8 +30,8 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource, Initial
     private ConfigurablePropertiesValidator propertiesValidator = new DefaultConfigurablePropertiesValidator();
 
     public static final String IDENTIFIER = FileBasedMarkdownSource.class.getName();
-    public static final String PROPERTY_SOURCE_DIR = IDENTIFIER +".sourceDirectory";
-    public static final String READ_FROM_CLASSPATH = IDENTIFIER+".readFromClasspath";
+    public static final String PROPERTY_SOURCE_DIR = IDENTIFIER + ".sourceDirectory";
+    public static final String READ_FROM_CLASSPATH = IDENTIFIER + ".readFromClasspath";
     private List<SourceProviderConfigProperty> sourceProviderConfig = new ArrayList<>();
     private Map<String, MarkdownElement<String>> markdownSourceMap = new ConcurrentHashMap<>();
     private Tree<SourceNavigationNode, String> navigationTree;
@@ -44,10 +44,10 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource, Initial
             throw new FileBasedMarkdownSourceException(FileBasedMarkdownSourceErrorCode.SOURCE_DIRECTORY_NOT_CONFIGURED);
         SourceProviderConfigProperty<Boolean> readFromClassPathProperty = sourceProviderConfig.stream().filter(property -> property.getPropertyName().equalsIgnoreCase(READ_FROM_CLASSPATH)).findFirst().orElse(null);
         boolean readFromClasspath = false;
-        if(readFromClassPathProperty != null)
+        if (readFromClassPathProperty != null)
             readFromClasspath = readFromClassPathProperty.getPropertyValue();
         FileBasedSourceUtility fileBasedSourceUtility = new FileBasedSourceUtility();
-        this.fileSimpleTree = fileBasedSourceUtility.buildTree((String) sourceDirectoryProperty.getPropertyValue(), readFromClasspath , ALLOWED_SOURCE_EXTENSION);
+        this.fileSimpleTree = fileBasedSourceUtility.buildTree((String) sourceDirectoryProperty.getPropertyValue(), readFromClasspath, ALLOWED_SOURCE_EXTENSION);
         buildSource();
         buildNavigationTree();
     }
@@ -71,13 +71,14 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource, Initial
             String identifier = getIdentifier(fileNode);
             markdownElement.setIdentifier(identifier);
             File value = fileNode.getValue();
-            try (Stream<String> lines = Files.lines(value.toPath())) {
-                String content = lines.collect(Collectors.joining(System.lineSeparator()));
-                markdownElement.setContent(content);
-            } catch (IOException e) {
-                e.printStackTrace();
-                //TODO Add logging
-            }
+            if (!value.isDirectory())
+                try (Stream<String> lines = Files.lines(value.toPath())) {
+                    String content = lines.collect(Collectors.joining(System.lineSeparator()));
+                    markdownElement.setContent(content);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    //TODO Add logging
+                }
             markdownSourceMap.put(identifier, markdownElement);
         }
     }

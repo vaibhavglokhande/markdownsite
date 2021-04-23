@@ -35,7 +35,7 @@ public class UIServiceImpl implements UIService {
 
     private NavigableMarkdownSource getNavigableMarkdownSource() throws SourceNotFoundException, UIServiceException {
         MarkdownSource configuredSource = sourceProvider.getConfiguredSource();
-        if(!NavigableMarkdownSource.class.isAssignableFrom(configuredSource.getClass()))
+        if (!NavigableMarkdownSource.class.isAssignableFrom(configuredSource.getClass()))
             throw new UIServiceException(UIServiceErrorCode.NAVIGABLE_SOURCE_NOT_CONFIGURED);
         return (NavigableMarkdownSource) configuredSource;
     }
@@ -45,6 +45,14 @@ public class UIServiceImpl implements UIService {
         NavigableMarkdownSource markdownSource = getNavigableMarkdownSource();
         MarkdownElement<String> markdownElement = markdownSource.getMarkdownElement(identifier);
         RenderEngine renderEngine = renderEngineFactory.getConfiguredRenderEngine();
-        return renderEngine.render(markdownElement.getContent());
+        // If not found, this page.
+        String content = """
+                # 404
+                
+                ## Not found
+                """;
+        if (markdownElement != null)
+            content = markdownElement.getContent();
+        return renderEngine.render(content);
     }
 }
