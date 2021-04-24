@@ -1,0 +1,43 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sources</title>
+
+    <th:block th:each="css: ${inlineCSS}">
+        <style th:replace="fragments/links :: inlineCssFragment (${css})"></style>
+    </th:block>
+
+    <th:block th:each="css: ${defaultCSS}">
+        <link th:replace="fragments/links :: cssFragment (${css})">
+    </th:block>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div th:each="source: ${sources}" class="col s12 m4 l3">
+            <div class="card grey darken-4 hoverable">
+                <div class="card-content white-text">
+                    <span class="card-title" th:text="${source.sourceName}"></span>
+                    <p th:text="${source.sourceDescription}"></p>
+                </div>
+                <div class=" amber darken-4 card-action">
+                    <a th:href="@{'/'+${source.sourceId}+'/index'}" class="waves-effect waves-light btn btn-flat white grey-text text-darken-4"><i class="material-icons right">launch</i>Open</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:each="src: ${defaultScript}">
+    <div th:replace="fragments/links :: scriptFragment (${src})"></div>
+</th:block>
+<th:block th:each="src: ${inlineScript}">
+    <div th:replace="fragments/links :: inlineScriptFragment (${src})"></div>
+</th:block>
+
+</body>
+</html>

@@ -8,6 +8,17 @@
 </head>
 <body>
 
+<th:block th:fragment="stylesheets">
+    <th:block th:fragment="materializecss" th:replace=":: cssFragment('https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css')" ></th:block>
+    <th:block th:fragment="materialicons" th:replace=":: cssFragment('https://fonts.googleapis.com/icon?family=Material+Icons')" ></th:block>
+    <th:block th:fragment="materialcomponents" th:replace=":: cssFragment('https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css')" ></th:block>
+    <th:block th:fragment="customcss" th:replace=":: cssFragment('/static/css/custom.css')" ></th:block>
+</th:block>
+
+<th:block th:fragment="scripts">
+    <th:block th:fragment="materializescript" th:replace=":: scriptFragment('https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js')" ></th:block>
+    <th:block th:fragment="jquery" th:replace=":: scriptFragment('https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js')" ></th:block>
+</th:block>
 <link th:href="${cssLink}" th:fragment="cssFragment (cssLink)" rel="stylesheet">
 
 <style th:utext="${inlineCss}" th:fragment="inlineCssFragment (inlineCss)"></style>
