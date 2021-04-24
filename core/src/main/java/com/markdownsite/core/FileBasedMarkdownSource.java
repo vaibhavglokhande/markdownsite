@@ -42,7 +42,12 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource {
     private String sourceDescription;
 
     public FileBasedMarkdownSource(String sourceName) {
+        this(sourceName,"");
+    }
+
+    public FileBasedMarkdownSource(String sourceName, String sourceDescription) {
         this.sourceName = sourceName;
+        this.sourceDescription = sourceDescription;
         configureDefaultProperties();
     }
 

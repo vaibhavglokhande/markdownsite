@@ -8,14 +8,23 @@
 </head>
 <body>
 
-<th:block th:fragment="navFragment (node)">
+<th:block th:fragment="navFragment (node, depth)">
     <th:block th:if="${node.directory}">
-        <li>
-            <a class="subheader" th:text="${node.displayName}"></a>
-            <ul>
-                <th:block th:each="childNode: ${node.children}">
-                    <li th:replace="::navFragment (${childNode})"></li>
-                </th:block>
+        <li class="no-padding">
+            <ul class="collapsible collapsible-accordion">
+                <li th:attr="class=${depth == 0 ? 'active' : ''}" >
+                    <a class="collapsible-header">
+                        <span th:text="${node.displayName}"></span>
+                        <i class="material-icons">arrow_drop_down</i>
+                    </a>
+                    <div class="collapsible-body">
+                        <ul>
+                            <th:block th:each="childNode: ${node.children}">
+                                <li th:replace="::navFragment (${childNode}, ${depth + 1})"></li>
+                            </th:block>
+                        </ul>
+                    </div>
+                </li>
             </ul>
         </li>
     </th:block>
@@ -23,6 +32,7 @@
         <a th:text="${node.displayName}" th:href="${node.value}"></a>
     </li>
 </th:block>
+
 
 <link th:href="${cssLink}" th:fragment="cssFragment (cssLink)" rel="stylesheet">
 

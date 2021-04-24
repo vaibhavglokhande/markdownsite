@@ -25,13 +25,11 @@
             <a href="#email"><span class="white-text email">user@mail.it</span></a>
         </div>
     </li>
-    <th:block th:each="node: ${nodes}">
-        <li th:replace="fragments/nav :: navFragment(${node})">
-        </li>
-        <li>
-            <div class="divider"></div>
-        </li>
-    </th:block>
+    <li th:replace="fragments/nav :: navFragment(${nodes}, 0)">
+    </li>
+    <li>
+        <div class="divider"></div>
+    </li>
 </ul>
 <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
 
@@ -48,7 +46,9 @@
 <script>
   $(document).ready(function(){
     $('.sidenav').sidenav();
+    $('.collapsible').collapsible();
   });
+
 </script>
 </body>
 </html>

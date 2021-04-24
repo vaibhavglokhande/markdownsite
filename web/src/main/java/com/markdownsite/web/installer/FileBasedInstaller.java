@@ -53,7 +53,7 @@ public class FileBasedInstaller extends AbstractInstaller {
         // 3. Initialize the source.
         // 4. Register the source.
         try {
-            MarkdownSource source = new FileBasedMarkdownSource(sourceIdentifier);
+            MarkdownSource source = new FileBasedMarkdownSource(sourceIdentifier,"This provides documentation to use this application as well as some examples for markdown. Get started.");
             List<SourceProviderConfigProperty> sourceConfig = source.getSourceConfig();
             List<SourceProviderConfigProperty> updatedProperties = sourceConfigInitializer.initProperties(sourceConfig);
             source.updateSourceConfig(updatedProperties);

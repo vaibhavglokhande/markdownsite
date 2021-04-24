@@ -46,13 +46,10 @@ public class UIController {
     @GetMapping(path = {"/{srcId}/", "/{srcId}/{docId}"})
     public String renderDoc(@PathVariable String srcId, @PathVariable(name = "docId", required = false) Optional<String> docId, Model model) throws AbstractException {
         Tree<SourceNavigationNode, String> navigationTree = uiService.getNavigationTree(srcId);
-        // Add the root node, as rest of the tree can be traversed using root node.
-        List<SourceNavigationNode> navigationNodes = new ArrayList<>();
-        navigationNodes.add(navigationTree.getRootNode());
         String content = uiService.getOrDefaultContent(srcId, docId.orElse("index"));
         populateModelWithResources(model);
         model.addAttribute("markdownRender", content);
-        model.addAttribute("nodes", navigationNodes);
+        model.addAttribute("nodes", navigationTree.getRootNode());
         model.addAttribute("sourceId", srcId);
         return "docs/markdown-render";
     }

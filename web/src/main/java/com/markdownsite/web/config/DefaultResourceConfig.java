@@ -30,7 +30,7 @@ public class DefaultResourceConfig  implements ResourceConfig {
     public List<String> getCssResources() {
         List<String> cssResources = new ArrayList<>();
         cssResources.add("https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css");
-        cssResources.add(getApplicationContextPath() + "/static/css/custom.css");
+        cssResources.add(getApplicationContextPath() + "/css/custom.css");
         return cssResources;
     }
 
