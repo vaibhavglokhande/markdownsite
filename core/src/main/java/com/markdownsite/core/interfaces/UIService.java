@@ -17,17 +17,21 @@ public interface UIService {
      * navigation node. The value of the node is the identifier of the source,
      * and other fields as required.
      *
+     * @param sourceIdentifier the source identifier
      * @return the navigation tree
+     * @throws AbstractException the abstract exception
      */
-    Tree<SourceNavigationNode, String> getNavigationTree() throws AbstractException;
+    Tree<SourceNavigationNode, String> getNavigationTree(String sourceIdentifier) throws AbstractException;
 
     /**
      * Gets content.
      * The content is the html rendered by the render engine provided by the source.
      * The source is selected based on the identifier provided.
      *
-     * @param identifier the identifier of the source
+     * @param sourceIdentifier the source identifier to select the source element
+     * @param identifier       the identifier of the source element to render content from
      * @return the content - the html content rendered by the render engine
+     * @throws AbstractException the abstract exception
      */
-    String getContent(String identifier) throws AbstractException;
+    String getContent(String sourceIdentifier, String identifier) throws AbstractException;
 }

@@ -17,10 +17,6 @@ import java.util.List;
 @Controller
 public class UIController {
 
-    // Hardcoding this value for time being.
-    // TODO Remove this hardcoded value, use configuration.
-    private String renderEngineUUID = "9971ea80-dec5-3154-af52-771b08068b97";
-
     private ResourceProvider resourceProvider;
     private UIService uiService;
 
@@ -31,13 +27,13 @@ public class UIController {
         this.uiService = uiService;
     }
 
-    @GetMapping(path = "/docs/{docId}")
-    public String renderDoc(@PathVariable String docId, Model model) throws AbstractException {
-        Tree<SourceNavigationNode, String> navigationTree = uiService.getNavigationTree();
+    @GetMapping(path = "/{srcId}/{docId}")
+    public String renderDoc(@PathVariable String srcId, @PathVariable String docId, Model model) throws AbstractException {
+        Tree<SourceNavigationNode, String> navigationTree = uiService.getNavigationTree(srcId);
         // Add the root node, as rest of the tree can be traversed using root node.
         List<SourceNavigationNode> navigationNodes = new ArrayList<>();
         navigationNodes.add(navigationTree.getRootNode());
-        String content = uiService.getContent(docId);
+        String content = uiService.getContent(srcId, docId);
         model.addAttribute("defaultCSS", resourceProvider.getCssResources());
         model.addAttribute("defaultScript", resourceProvider.getJsResources());
         model.addAttribute("inlineCSS", resourceProvider.getInlineCssResources());

@@ -118,7 +118,7 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource {
 
     @Override
     public String sourceIdentifier() {
-        return sourceName;
+        return sourceName.toLowerCase();
     }
 
     @Override

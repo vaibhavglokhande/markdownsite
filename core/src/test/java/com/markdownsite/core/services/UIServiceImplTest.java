@@ -24,11 +24,11 @@ class UIServiceImplTest {
         MarkdownSourceProvider sourceProvider = Mockito.mock(MarkdownSourceProvider.class);
 
         NavigableMarkdownSource navigableMarkdownSource = Mockito.mock(NavigableMarkdownSource.class);
-        Mockito.when(sourceProvider.getConfiguredSource()).thenReturn(navigableMarkdownSource);
+        Mockito.when(sourceProvider.getSource("id")).thenReturn(navigableMarkdownSource);
 
         RenderEngineFactory engineFactory = Mockito.mock(RenderEngineFactory.class);
         UIService uiService = new UIServiceImpl(sourceProvider, engineFactory);
-        uiService.getNavigationTree();
+        uiService.getNavigationTree("id");
         Mockito.verify(navigableMarkdownSource, Mockito.times(1)).getNavigationTree();
     }
 
@@ -37,11 +37,11 @@ class UIServiceImplTest {
         MarkdownSourceProvider sourceProvider = Mockito.mock(MarkdownSourceProvider.class);
 
         MarkdownSource markdownSource = Mockito.mock(MarkdownSource.class);
-        Mockito.when(sourceProvider.getConfiguredSource()).thenReturn(markdownSource);
+        Mockito.when(sourceProvider.getSource("non-nav")).thenReturn(markdownSource);
 
         RenderEngineFactory engineFactory = Mockito.mock(RenderEngineFactory.class);
         UIService uiService = new UIServiceImpl(sourceProvider, engineFactory);
-        UIServiceException uiServiceException = assertThrows(UIServiceException.class, uiService::getNavigationTree);
+        UIServiceException uiServiceException = assertThrows(UIServiceException.class, () -> uiService.getNavigationTree("non-nav"));
         assertEquals(UIServiceErrorCode.NAVIGABLE_SOURCE_NOT_CONFIGURED, uiServiceException.getErrorCode());
     }
 
@@ -50,7 +50,7 @@ class UIServiceImplTest {
         MarkdownSourceProvider sourceProvider = Mockito.mock(MarkdownSourceProvider.class);
 
         NavigableMarkdownSource navigableMarkdownSource = Mockito.mock(NavigableMarkdownSource.class);
-        Mockito.when(sourceProvider.getConfiguredSource()).thenReturn(navigableMarkdownSource);
+        Mockito.when(sourceProvider.getSource("ui")).thenReturn(navigableMarkdownSource);
 
         MarkdownElement markdownElement = Mockito.mock(MarkdownElement.class);
         Mockito.when(markdownElement.getContent()).thenReturn("# Title");
@@ -60,7 +60,7 @@ class UIServiceImplTest {
         RenderEngine renderEngine = Mockito.mock(RenderEngine.class);
         Mockito.when(engineFactory.getConfiguredRenderEngine()).thenReturn(renderEngine);
         UIService uiService = new UIServiceImpl(sourceProvider, engineFactory);
-        uiService.getContent("elementId");
+        uiService.getContent("ui", "elementId");
 
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(renderEngine).render(stringArgumentCaptor.capture());

@@ -28,21 +28,21 @@ public class UIServiceImpl implements UIService {
     }
 
     @Override
-    public Tree<SourceNavigationNode, String> getNavigationTree() throws SourceException, UIServiceException {
-        NavigableMarkdownSource markdownSource = getNavigableMarkdownSource();
+    public Tree<SourceNavigationNode, String> getNavigationTree(String sourceIdentifier) throws SourceException, UIServiceException {
+        NavigableMarkdownSource markdownSource = getNavigableMarkdownSource(sourceIdentifier);
         return markdownSource.getNavigationTree();
     }
 
-    private NavigableMarkdownSource getNavigableMarkdownSource() throws SourceException, UIServiceException {
-        MarkdownSource configuredSource = sourceProvider.getConfiguredSource();
+    private NavigableMarkdownSource getNavigableMarkdownSource(String sourceIdentifier) throws SourceException, UIServiceException {
+        MarkdownSource configuredSource = sourceProvider.getSource(sourceIdentifier);
         if (!NavigableMarkdownSource.class.isAssignableFrom(configuredSource.getClass()))
             throw new UIServiceException(UIServiceErrorCode.NAVIGABLE_SOURCE_NOT_CONFIGURED);
         return (NavigableMarkdownSource) configuredSource;
     }
 
     @Override
-    public String getContent(String identifier) throws SourceException, UIServiceException {
-        NavigableMarkdownSource markdownSource = getNavigableMarkdownSource();
+    public String getContent(String sourceIdentifier, String identifier) throws SourceException, UIServiceException {
+        NavigableMarkdownSource markdownSource = getNavigableMarkdownSource(sourceIdentifier);
         MarkdownElement<String> markdownElement = markdownSource.getMarkdownElement(identifier);
         RenderEngine renderEngine = renderEngineFactory.getConfiguredRenderEngine();
         // If not found, this page.
