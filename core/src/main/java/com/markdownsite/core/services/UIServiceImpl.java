@@ -4,7 +4,7 @@ import com.markdownsite.core.RenderEngineFactory;
 import com.markdownsite.core.enums.UIServiceErrorCode;
 import com.markdownsite.core.exceptions.UIServiceException;
 import com.markdownsite.core.interfaces.UIService;
-import com.markdownsite.integration.exceptions.SourceNotFoundException;
+import com.markdownsite.integration.exceptions.SourceException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
 import com.markdownsite.integration.interfaces.NavigableMarkdownSource;
 import com.markdownsite.integration.interfaces.RenderEngine;
@@ -28,12 +28,12 @@ public class UIServiceImpl implements UIService {
     }
 
     @Override
-    public Tree<SourceNavigationNode, String> getNavigationTree() throws SourceNotFoundException, UIServiceException {
+    public Tree<SourceNavigationNode, String> getNavigationTree() throws SourceException, UIServiceException {
         NavigableMarkdownSource markdownSource = getNavigableMarkdownSource();
         return markdownSource.getNavigationTree();
     }
 
-    private NavigableMarkdownSource getNavigableMarkdownSource() throws SourceNotFoundException, UIServiceException {
+    private NavigableMarkdownSource getNavigableMarkdownSource() throws SourceException, UIServiceException {
         MarkdownSource configuredSource = sourceProvider.getConfiguredSource();
         if (!NavigableMarkdownSource.class.isAssignableFrom(configuredSource.getClass()))
             throw new UIServiceException(UIServiceErrorCode.NAVIGABLE_SOURCE_NOT_CONFIGURED);
@@ -41,7 +41,7 @@ public class UIServiceImpl implements UIService {
     }
 
     @Override
-    public String getContent(String identifier) throws SourceNotFoundException, UIServiceException {
+    public String getContent(String identifier) throws SourceException, UIServiceException {
         NavigableMarkdownSource markdownSource = getNavigableMarkdownSource();
         MarkdownElement<String> markdownElement = markdownSource.getMarkdownElement(identifier);
         RenderEngine renderEngine = renderEngineFactory.getConfiguredRenderEngine();

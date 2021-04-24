@@ -10,32 +10,40 @@ import com.markdownsite.integration.interfaces.NavigableMarkdownSource;
 import com.markdownsite.integration.interfaces.SimpleTraverseMode;
 import com.markdownsite.integration.interfaces.Tree;
 import com.markdownsite.integration.models.*;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.stereotype.Component;
+import lombok.Setter;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component
-public class FileBasedMarkdownSource implements NavigableMarkdownSource, InitializingBean {
+public class FileBasedMarkdownSource implements NavigableMarkdownSource {
 
     public static final String ALLOWED_SOURCE_EXTENSION = ".md";
     private SimpleTree<FileNode, File> fileSimpleTree;
     private ConfigurablePropertiesValidator propertiesValidator = new DefaultConfigurablePropertiesValidator();
 
-    public static final String IDENTIFIER = FileBasedMarkdownSource.class.getName();
-    public static final String PROPERTY_SOURCE_DIR = IDENTIFIER + ".sourceDirectory";
-    public static final String READ_FROM_CLASSPATH = IDENTIFIER + ".readFromClasspath";
+    public static final String PROPERTY_SOURCE_DIR = "FileSource.sourceDirectory";
+    public static final String READ_FROM_CLASSPATH = "FileSource.readFromClasspath";
     private List<SourceProviderConfigProperty> sourceProviderConfig = new ArrayList<>();
     private Map<String, MarkdownElement<String>> markdownSourceMap = new ConcurrentHashMap<>();
     private Tree<SourceNavigationNode, String> navigationTree;
+    @Setter
+    private String sourceName;
+    @Setter
+    private String sourceDescription;
 
+    public FileBasedMarkdownSource(String sourceName) {
+        this.sourceName = sourceName;
+        configureDefaultProperties();
+    }
 
     @Override
     public void initializeSource() throws FileBasedMarkdownSourceException, TreeOperationException {
@@ -110,7 +118,17 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource, Initial
 
     @Override
     public String sourceIdentifier() {
-        return IDENTIFIER;
+        return sourceName;
+    }
+
+    @Override
+    public String sourceName() {
+        return sourceName;
+    }
+
+    @Override
+    public String sourceDescription() {
+        return this.sourceDescription;
     }
 
     private void validateProperties(List<SourceProviderConfigProperty> sourceProviderConfig) throws PropertyValidationException {
@@ -127,8 +145,7 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource, Initial
         return navigationTree;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    public void configureDefaultProperties() {
         SourceProviderConfigProperty<String> sourceProviderConfigProperty = new SourceProviderConfigProperty<>(PROPERTY_SOURCE_DIR, "");
         sourceProviderConfig.add(sourceProviderConfigProperty);
         SourceProviderConfigProperty<Boolean> readFromClassPathConfigProperty = new SourceProviderConfigProperty<>(READ_FROM_CLASSPATH, false);

@@ -1,7 +1,7 @@
 package com.markdownsite.integration.providers;
 
-import com.markdownsite.integration.enums.SourceNotFoundErrorCode;
-import com.markdownsite.integration.exceptions.SourceNotFoundException;
+import com.markdownsite.integration.enums.SourceErrorCode;
+import com.markdownsite.integration.exceptions.SourceException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,33 +23,33 @@ class MarkdownSourceProviderTest {
     MarkdownSourceProvider markdownSourceProvider;
 
     @Test
-    void testGetSourceProvider() throws SourceNotFoundException {
+    void testGetSourceProvider() throws SourceException {
         assertNotNull(markdownSourceProvider.getSource("mock-source"));
     }
 
     @Test
     void testForException() {
-        SourceNotFoundException sourceNotFoundException = assertThrows(SourceNotFoundException.class, () -> markdownSourceProvider.getSource("invalid-id"));
-        assertEquals(SourceNotFoundErrorCode.SOURCE_NOT_FOUND_EXCEPTION, sourceNotFoundException.getErrorCode());
+        SourceException sourceException = assertThrows(SourceException.class, () -> markdownSourceProvider.getSource("invalid-id"));
+        assertEquals(SourceErrorCode.SOURCE_NOT_FOUND_EXCEPTION, sourceException.getErrorCode());
     }
 
     @Test
     void testNoSourceConfiguredException() {
         MarkdownSourceProvider markdownSourceProvider = new MarkdownSourceProvider(null);
-        SourceNotFoundException sourceNotFoundException = assertThrows(SourceNotFoundException.class, () -> markdownSourceProvider.getSource("invalid"));
-        assertEquals(SourceNotFoundErrorCode.SOURCE_NOT_CONFIGURED_EXCEPTION, sourceNotFoundException.getErrorCode());
+        SourceException sourceException = assertThrows(SourceException.class, () -> markdownSourceProvider.getSource("invalid"));
+        assertEquals(SourceErrorCode.SOURCE_NOT_CONFIGURED_EXCEPTION, sourceException.getErrorCode());
     }
 
     @TestConfiguration
     static class MarkdonwSourceProviderTestConfig {
 
         @Bean
-        public Set<MarkdownSource> getMarkdownSources() {
-            Set<MarkdownSource> markdownSources = new HashSet<>();
+        public Map<String, MarkdownSource> getMarkdownSources() {
+            Map<String, MarkdownSource> markdownSources = new HashMap<>();
 
             MarkdownSource markdownSource = Mockito.mock(MarkdownSource.class);
             Mockito.when(markdownSource.sourceIdentifier()).thenReturn("mock-source");
-            markdownSources.add(markdownSource);
+            markdownSources.put("mock-source",markdownSource);
 
             return markdownSources;
         }

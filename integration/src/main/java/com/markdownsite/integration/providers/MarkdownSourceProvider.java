@@ -1,33 +1,49 @@
 package com.markdownsite.integration.providers;
 
-import com.markdownsite.integration.enums.SourceNotFoundErrorCode;
-import com.markdownsite.integration.exceptions.SourceNotFoundException;
+import com.markdownsite.integration.enums.SourceErrorCode;
+import com.markdownsite.integration.exceptions.SourceException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 @Component
 public class MarkdownSourceProvider {
 
-    private Set<MarkdownSource> markdownSources;
+    private Map<String, MarkdownSource> markdownSources;
 
-    @Autowired
-    public MarkdownSourceProvider(Set<MarkdownSource> markdownSources) {
+    public MarkdownSourceProvider(Map<String, MarkdownSource> markdownSources) {
         this.markdownSources = markdownSources;
     }
 
-    public MarkdownSource getSource(String sourceIdentifier) throws SourceNotFoundException {
+    public MarkdownSource getSource(String sourceIdentifier) throws SourceException {
         if (markdownSources == null)
-            throw new SourceNotFoundException(SourceNotFoundErrorCode.SOURCE_NOT_CONFIGURED_EXCEPTION);
-        Optional<MarkdownSource> source = markdownSources.stream().filter(markdownSource -> markdownSource.sourceIdentifier().equalsIgnoreCase(sourceIdentifier)).findFirst();
-        return source.orElseThrow(() -> new SourceNotFoundException(SourceNotFoundErrorCode.SOURCE_NOT_FOUND_EXCEPTION));
+            throw new SourceException(SourceErrorCode.SOURCE_NOT_CONFIGURED_EXCEPTION);
+        Optional<MarkdownSource> source = Optional.ofNullable(markdownSources.get(sourceIdentifier));
+        return source.orElseThrow(() -> new SourceException(SourceErrorCode.SOURCE_NOT_FOUND_EXCEPTION));
     }
 
-    public MarkdownSource getConfiguredSource() throws SourceNotFoundException {
-        return getSource("com.markdownsite.core.FileBasedMarkdownSource");
+    public Map<String, MarkdownSource> getAllSources() throws SourceException {
+        if (markdownSources == null)
+            throw new SourceException(SourceErrorCode.SOURCE_NOT_CONFIGURED_EXCEPTION);
+        return markdownSources;
+    }
+
+    public void registerSource(MarkdownSource markdownSource) throws SourceException {
+        if (markdownSources.containsKey(markdownSource.sourceIdentifier()))
+            throw new SourceException(SourceErrorCode.SOURCE_ALREADY_CONFIGURED);
+        markdownSources.put(markdownSource.sourceIdentifier(), markdownSource);
+    }
+
+    public void removeSource(String sourceIdentifier) throws SourceException {
+        if(!markdownSources.containsKey(sourceIdentifier))
+            throw new SourceException(SourceErrorCode.SOURCE_NOT_FOUND_EXCEPTION);
+        markdownSources.remove(sourceIdentifier);
+    }
+
+    public MarkdownSource getConfiguredSource() throws SourceException {
+        return getSource("HelpDocs");
     }
 
 }

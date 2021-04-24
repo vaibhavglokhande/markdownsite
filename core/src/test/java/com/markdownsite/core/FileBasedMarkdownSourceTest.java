@@ -74,7 +74,7 @@ class FileBasedMarkdownSourceTest {
 
         @Bean
         public FileBasedMarkdownSource getFileBasedMarkdown() {
-            return new FileBasedMarkdownSource();
+            return new FileBasedMarkdownSource("com.markdownsite.core.FileBasedMarkdownSource");
         }
 
     }

@@ -65,4 +65,8 @@ public interface MarkdownSource {
      */
     String sourceIdentifier();
 
+    String sourceName();
+
+    String sourceDescription();
+
 }

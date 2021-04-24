@@ -5,7 +5,7 @@ import com.markdownsite.core.enums.UIServiceErrorCode;
 import com.markdownsite.core.exceptions.UIServiceException;
 import com.markdownsite.core.interfaces.UIService;
 import com.markdownsite.integration.exceptions.AbstractException;
-import com.markdownsite.integration.exceptions.SourceNotFoundException;
+import com.markdownsite.integration.exceptions.SourceException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
 import com.markdownsite.integration.interfaces.NavigableMarkdownSource;
 import com.markdownsite.integration.interfaces.RenderEngine;
@@ -33,7 +33,7 @@ class UIServiceImplTest {
     }
 
     @Test
-    void getNavigationTreeException() throws SourceNotFoundException {
+    void getNavigationTreeException() throws SourceException {
         MarkdownSourceProvider sourceProvider = Mockito.mock(MarkdownSourceProvider.class);
 
         MarkdownSource markdownSource = Mockito.mock(MarkdownSource.class);
