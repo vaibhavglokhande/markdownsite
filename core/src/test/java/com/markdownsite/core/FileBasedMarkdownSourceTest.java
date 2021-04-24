@@ -31,7 +31,7 @@ class FileBasedMarkdownSourceTest {
 
     @Test
     void sourceIdentifier() {
-        assertEquals("com.markdownsite.core.FileBasedMarkdownSource", markdownSource.sourceIdentifier());
+        assertEquals("FileBasedMarkdownSource", markdownSource.sourceIdentifier());
     }
 
     @Test

@@ -48,7 +48,7 @@ class MarkdownSourceProviderTest {
             Map<String, MarkdownSource> markdownSources = new HashMap<>();
 
             MarkdownSource markdownSource = Mockito.mock(MarkdownSource.class);
-            Mockito.when(markdownSource.sourceIdentifier()).thenReturn("mock-source");
+            Mockito.when(markdownSource.sourceName()).thenReturn("mock-source");
             markdownSources.put("mock-source",markdownSource);
 
             return markdownSources;

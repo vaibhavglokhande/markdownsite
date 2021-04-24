@@ -30,6 +30,7 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource {
     private SimpleTree<FileNode, File> fileSimpleTree;
     private ConfigurablePropertiesValidator propertiesValidator = new DefaultConfigurablePropertiesValidator();
 
+    private static final String IDENTIFIER = FileBasedMarkdownSource.class.getSimpleName();
     public static final String PROPERTY_SOURCE_DIR = "FileSource.sourceDirectory";
     public static final String READ_FROM_CLASSPATH = "FileSource.readFromClasspath";
     private List<SourceProviderConfigProperty> sourceProviderConfig = new ArrayList<>();
@@ -118,7 +119,7 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource {
 
     @Override
     public String sourceIdentifier() {
-        return sourceName.toLowerCase();
+        return IDENTIFIER;
     }
 
     @Override
