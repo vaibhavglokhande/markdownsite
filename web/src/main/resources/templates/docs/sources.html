@@ -25,7 +25,7 @@
                     <p th:text="${source.sourceDescription}"></p>
                 </div>
                 <div class=" amber darken-4 card-action">
-                    <a th:href="@{'/'+${source.sourceId}+'/index'}" class="waves-effect waves-light btn btn-flat white grey-text text-darken-4"><i class="material-icons right">launch</i>Open</a>
+                    <a th:href="@{/docs/{id}/(id=${source.sourceId})}" class="waves-effect waves-light btn btn-flat white grey-text text-darken-4"><i class="material-icons right">launch</i>Open</a>
                 </div>
             </div>
         </div>

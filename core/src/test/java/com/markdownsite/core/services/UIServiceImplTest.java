@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UIServiceImplTest {
@@ -66,5 +68,28 @@ class UIServiceImplTest {
         Mockito.verify(renderEngine).render(stringArgumentCaptor.capture());
         assertEquals("# Title", stringArgumentCaptor.getValue());
 
+    }
+
+    @Test
+    void getOrDefaultContent() throws AbstractException {
+        MarkdownSourceProvider sourceProvider = Mockito.mock(MarkdownSourceProvider.class);
+
+        NavigableMarkdownSource navigableMarkdownSource = Mockito.mock(NavigableMarkdownSource.class);
+        Mockito.when(sourceProvider.getSource("ui")).thenReturn(navigableMarkdownSource);
+
+        MarkdownElement markdownElement = Mockito.mock(MarkdownElement.class);
+        Mockito.when(markdownElement.getContent()).thenReturn("# Title");
+        Mockito.when(navigableMarkdownSource.getMarkdownElement("elementId")).thenReturn(markdownElement);
+        Mockito.when(navigableMarkdownSource.getAll()).thenReturn(new HashMap<>(){{put("elementId",markdownElement);}});
+
+        RenderEngineFactory engineFactory = Mockito.mock(RenderEngineFactory.class);
+        RenderEngine renderEngine = Mockito.mock(RenderEngine.class);
+        Mockito.when(engineFactory.getConfiguredRenderEngine()).thenReturn(renderEngine);
+        UIService uiService = new UIServiceImpl(sourceProvider, engineFactory);
+        uiService.getOrDefaultContent("ui", "elementId-not-present");
+
+        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        Mockito.verify(renderEngine).render(stringArgumentCaptor.capture());
+        assertEquals("# Title", stringArgumentCaptor.getValue());
     }
 }

@@ -15,9 +15,18 @@ import com.markdownsite.integration.providers.MarkdownSourceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiFunction;
+
 @Service
 public class UIServiceImpl implements UIService {
 
+    public static final String NOT_FOUND = """
+            # 404
+                            
+            ## Not found
+            """;
     private MarkdownSourceProvider sourceProvider;
     private RenderEngineFactory renderEngineFactory;
 
@@ -42,15 +51,28 @@ public class UIServiceImpl implements UIService {
 
     @Override
     public String getContent(String sourceIdentifier, String identifier) throws SourceException, UIServiceException {
+        return getRenderedContent(sourceIdentifier, identifier, (markdownSource, markdownElement) -> markdownElement);
+    }
+
+    @Override
+    public String getOrDefaultContent(String sourceIdentifier, String identifier) throws UIServiceException, SourceException {
+        return getRenderedContent(sourceIdentifier, identifier, (markdownSource, markdownElement) -> {
+            Optional<Map.Entry<String, MarkdownElement<String>>> elementEntry1 = markdownSource.getAll().entrySet().stream().filter(stringMarkdownElementEntry -> stringMarkdownElementEntry.getValue() != null).findFirst();
+            if (elementEntry1.isPresent()) {
+                markdownElement = elementEntry1.get().getValue();
+            }
+            return markdownElement;
+        });
+    }
+
+    private String getRenderedContent(String sourceIdentifier, String identifier, BiFunction<NavigableMarkdownSource, MarkdownElement<String>, MarkdownElement<String>> biFunction) throws SourceException, UIServiceException {
         NavigableMarkdownSource markdownSource = getNavigableMarkdownSource(sourceIdentifier);
         MarkdownElement<String> markdownElement = markdownSource.getMarkdownElement(identifier);
         RenderEngine renderEngine = renderEngineFactory.getConfiguredRenderEngine();
-        // If not found, this page.
-        String content = """
-                # 404
-                
-                ## Not found
-                """;
+        String content = NOT_FOUND;
+        if (markdownElement == null) {
+            markdownElement = biFunction.apply(markdownSource, null);
+        }
         if (markdownElement != null)
             content = markdownElement.getContent();
         return renderEngine.render(content);

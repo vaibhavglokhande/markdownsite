@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequestMapping("/docs")
 public class UIController {
 
     private ResourceProvider resourceProvider;
@@ -34,24 +35,25 @@ public class UIController {
         this.sourceService = sourceService;
     }
 
-    @RequestMapping(path = "/")
+    @RequestMapping(path = {"", "/"})
     public String showSourceList(Model model) throws SourceException {
         populateModelWithResources(model);
         List<SourceInfo> allSourcesInfo = this.sourceService.getAllSourcesInfo();
         model.addAttribute("sources", allSourcesInfo);
-        return "sources";
+        return "docs/sources";
     }
 
-    @GetMapping(path = "/{srcId}/{docId}")
-    public String renderDoc(@PathVariable String srcId, @PathVariable(name = "docId") Optional<String> docId, Model model) throws AbstractException {
+    @GetMapping(path = {"/{srcId}/", "/{srcId}/{docId}"})
+    public String renderDoc(@PathVariable String srcId, @PathVariable(name = "docId", required = false) Optional<String> docId, Model model) throws AbstractException {
         Tree<SourceNavigationNode, String> navigationTree = uiService.getNavigationTree(srcId);
         // Add the root node, as rest of the tree can be traversed using root node.
         List<SourceNavigationNode> navigationNodes = new ArrayList<>();
         navigationNodes.add(navigationTree.getRootNode());
-        String content = uiService.getContent(srcId, docId.orElse("index"));
+        String content = uiService.getOrDefaultContent(srcId, docId.orElse("index"));
         populateModelWithResources(model);
         model.addAttribute("markdownRender", content);
         model.addAttribute("nodes", navigationNodes);
+        model.addAttribute("sourceId", srcId);
         return "docs/markdown-render";
     }
 
