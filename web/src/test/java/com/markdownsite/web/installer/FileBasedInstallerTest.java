@@ -26,7 +26,7 @@ class FileBasedInstallerTest {
         ArrayList<SourceProviderConfigProperty> updatedProperties = new ArrayList<>();
         Path path = Paths.get("src", "test", "resources", "HelpDocs");
         updatedProperties.add(new SourceProviderConfigProperty("FileSource.sourceDirectory", path.toString()));
-        Mockito.when(sourceConfigInitializer.initProperties(configProperties)).thenReturn(updatedProperties);
+        Mockito.when(sourceConfigInitializer.initProperties(Mockito.anyList())).thenReturn(updatedProperties);
 
         FileBasedInstaller fileBasedInstaller = new FileBasedInstaller(sourceConfigInitializer, markdownSourceProvider);
         fileBasedInstaller.install(InstallationMode.NEW);
