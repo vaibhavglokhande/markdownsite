@@ -1,0 +1,48 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error!</title>
+    <link th:replace="fragments/links :: cssFragment ('https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css')">
+    <style>
+        html, body {
+          height: 100%;
+        }
+
+        .full-height {
+          height: 100%;
+        }
+
+    </style>
+</head>
+<body class="red darken-4">
+<div class="container white full-height z-depth-5">
+    <div class="row full-height valign-wrapper">
+        <div class="col s6 offset-s3">
+            <h1 class="blue-grey-text darken-4">Oops! Something went wrong.</h1>
+            <h4 class="grey-text darken-4">Please contact administrator and provide them below details for more info.</h4>
+            <table class="responsive-table">
+                <tbody>
+                <tr>
+                    <td>Error Code</td>
+                    <td th:text="${errorCode}"></td>
+                </tr>
+                <tr>
+                    <td>Error Message</td>
+                    <td th:text="${errorMessage}"></td>
+                </tr>
+                <tr>
+                    <td>Error Description</td>
+                    <td th:text="${exceptionMessage}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div th:replace="fragments/links :: scriptFragment ('https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js')"></div>
+</div>
+</body>
+</html>
