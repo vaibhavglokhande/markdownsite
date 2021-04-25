@@ -8,6 +8,7 @@ import com.markdownsite.integration.models.SourceProviderConfigProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class FileBasedSourceRegistrationHelper implements SourceRegistrationHelper {
@@ -27,8 +28,22 @@ public class FileBasedSourceRegistrationHelper implements SourceRegistrationHelp
     @Override
     public MarkdownSource buildSource(SourceInfo sourceInfo, List<SourceProviderConfigProperty> configProperties) throws PropertyValidationException {
         FileBasedMarkdownSource fileBasedMarkdownSource = new FileBasedMarkdownSource(sourceInfo.getSourceName(), sourceInfo.getSourceDescription());
-        fileBasedMarkdownSource.updateSourceConfig(configProperties);
+        List<SourceProviderConfigProperty> defaultConfig = fileBasedMarkdownSource.getSourceConfig();
+        mapProperties(configProperties, defaultConfig);
+        fileBasedMarkdownSource.updateSourceConfig(defaultConfig);
         return fileBasedMarkdownSource;
+    }
+
+    private void mapProperties(List<SourceProviderConfigProperty> configProperties, List<SourceProviderConfigProperty> defaultConfig) {
+        for (SourceProviderConfigProperty property : defaultConfig) {
+            Optional<SourceProviderConfigProperty> providedOptional = configProperties.stream().filter(providedProperty -> property.getPropertyName().equalsIgnoreCase(providedProperty.getPropertyName())).findFirst();
+            if (providedOptional.isPresent()) {
+                SourceProviderConfigProperty provided = providedOptional.get();
+                property.setPropertyValue(provided.getPropertyValue());
+                if (provided.getChildrenProperties() != null)
+                    mapProperties(provided.getChildrenProperties(), property.getChildrenProperties());
+            }
+        }
     }
 
     @Override
