@@ -1,0 +1,50 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Source Registration - Select</title>
+    <th:block th:each="css: ${inlineCSS}">
+        <style th:replace="fragments/links :: inlineCssFragment (${css})"></style>
+    </th:block>
+
+    <th:block th:each="css: ${defaultCSS}">
+        <link th:replace="fragments/links :: cssFragment (${css})">
+    </th:block>
+</head>
+<body>
+<div class="container full-height">
+    <div class="row full-height valign-wrapper">
+        <div class="col s6 offset-s3">
+            <form action="#" th:action="@{/admin/register-source}" th:object="${sourceInfo}" method="get">
+                <div class="input-field col s12">
+                    <select th:field="*{sourceId}">
+                        <option th:each="source : ${sourcesList}"
+                                th:value="${source.sourceId}"
+                                th:text="${source.sourceName}">Wireframe
+                        </option>
+                        <label>Select the source type.</label>
+                    </select>
+                </div>
+                <div class="input-field col s12">
+                    <input type="submit" value="Submit" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block th:each="src: ${defaultScript}">
+    <div th:replace="fragments/links :: scriptFragment (${src})"></div>
+</th:block>
+<th:block th:each="src: ${inlineScript}">
+    <div th:replace="fragments/links :: inlineScriptFragment (${src})"></div>
+</th:block>
+<script>
+$(document).ready(function(){
+    $('select').formSelect();
+});
+</script>
+</body>
+</html>

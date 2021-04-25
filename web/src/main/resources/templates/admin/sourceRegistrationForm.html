@@ -1,0 +1,86 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Source Registration - Select</title>
+    <th:block th:each="css: ${inlineCSS}">
+        <style th:replace="fragments/links :: inlineCssFragment (${css})"></style>
+    </th:block>
+
+    <th:block th:each="css: ${defaultCSS}">
+        <link th:replace="fragments/links :: cssFragment (${css})">
+    </th:block>
+</head>
+<body>
+<div class="container full-height">
+    <div class="row full-height valign-wrapper">
+        <div class="col s6 offset-s3">
+            <form action="#" th:action="@{/admin/register-source}" th:object="${registrationModel}" method="post">
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input required placeholder="Source Name" id="sourceName" name="sourceName"
+                               th:field="*{sourceInfo.sourceName}" th:value="*{sourceInfo.sourceName}" type="text"
+                               class="validate">
+                        <label for="sourceName">Source Name</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input placeholder="Source Description" id="sourceDescription" name="sourceDescription"
+                               th:field="*{sourceInfo.sourceDescription}" th:value="*{sourceInfo.sourceDescription}"
+                               type="text" class="validate">
+                        <label for="sourceDescription">Source Description</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <input type="hidden" name="sourceId"
+                           th:field="*{sourceInfo.sourceId}" th:value="*{sourceInfo.sourceId}">
+                </div>
+                <div th:each="configProperty, itemStat : *{configProperties} " class="row">
+                    <div class="input-field col s6">
+                        <input required placeholder="Enter value"
+                               th:id="*{configProperties[__${itemStat.index}__].propertyName}"
+                               th:name="*{configProperties[__${itemStat.index}__].propertyName}"
+                               th:field="*{configProperties[__${itemStat.index}__].propertyValue}"
+                               th:value="*{configProperties[__${itemStat.index}__].propertyValue}"
+                               type="text" class="validate">
+                        <label th:for="*{configProperties[__${itemStat.index}__].propertyName}"
+                               th:text="*{configProperties[__${itemStat.index}__].propertyName}">Property Name</label>
+                    </div>
+                    <input type="hidden" th:field="*{configProperties[__${itemStat.index}__].propertyName}"
+                           th:value="*{configProperties[__${itemStat.index}__].propertyName}">
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input type="submit" value="Submit"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block th:each="src: ${defaultScript}">
+    <div th:replace="fragments/links :: scriptFragment (${src})"></div>
+</th:block>
+<th:block th:each="src: ${inlineScript}">
+    <div th:replace="fragments/links :: inlineScriptFragment (${src})"></div>
+</th:block>
+<script>
+$(document).ready(function(){
+    $('select').formSelect();
+});
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

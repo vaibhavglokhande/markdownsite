@@ -16,6 +16,10 @@ public class SourceProviderConfigProperty<T> {
     private List<SourceProviderConfigProperty> childrenProperties;
     private ConfigurablePropertiesRules<T> configurablePropertiesRules;
 
+    // TODO Remove this constructor. For UI, add it's separate model and map it to this.
+    public SourceProviderConfigProperty() {
+    }
+
     public SourceProviderConfigProperty(String propertyName, T propertyValue) {
         this(propertyName, propertyValue, new ArrayList<>());
     }

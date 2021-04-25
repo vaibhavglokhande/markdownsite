@@ -1,5 +1,6 @@
 package com.markdownsite.core;
 
+import com.google.gson.Gson;
 import com.markdownsite.integration.exceptions.PropertyValidationException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
 import com.markdownsite.integration.interfaces.SourceRegistrationHelper;
@@ -39,11 +40,19 @@ public class FileBasedSourceRegistrationHelper implements SourceRegistrationHelp
             Optional<SourceProviderConfigProperty> providedOptional = configProperties.stream().filter(providedProperty -> property.getPropertyName().equalsIgnoreCase(providedProperty.getPropertyName())).findFirst();
             if (providedOptional.isPresent()) {
                 SourceProviderConfigProperty provided = providedOptional.get();
-                property.setPropertyValue(provided.getPropertyValue());
+                Gson gson = new Gson();
+                // TODO Fix this properly
+                // Add proper ConfigInitializer
+                property.setPropertyValue(convertValue(gson.toJson(provided.getPropertyValue()), property.getPropertyValue().getClass()));
                 if (provided.getChildrenProperties() != null)
                     mapProperties(provided.getChildrenProperties(), property.getChildrenProperties());
             }
         }
+    }
+
+    private <T> T convertValue(String value, Class<T> aClass) {
+        Gson gson = new Gson();
+        return gson.fromJson(value, aClass);
     }
 
     @Override

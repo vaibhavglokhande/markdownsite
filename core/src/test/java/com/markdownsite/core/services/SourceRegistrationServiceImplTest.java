@@ -3,6 +3,7 @@ package com.markdownsite.core.services;
 import com.markdownsite.core.enums.SourceRegistrationErrorCode;
 import com.markdownsite.core.exceptions.SourceRegistrationException;
 import com.markdownsite.core.interfaces.SourceRegistrationService;
+import com.markdownsite.integration.exceptions.AbstractException;
 import com.markdownsite.integration.exceptions.PropertyValidationException;
 import com.markdownsite.integration.exceptions.SourceException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
@@ -41,10 +42,11 @@ class SourceRegistrationServiceImplTest {
     }
 
     @Test
-    void registerSource() throws PropertyValidationException, SourceException, SourceRegistrationException {
+    void registerSource() throws AbstractException {
         SourceRegistrationHelper registrationHelper = Mockito.mock(SourceRegistrationHelper.class);
         Mockito.when(registrationHelper.supports(Mockito.anyString())).thenReturn(true);
-        Mockito.when(registrationHelper.buildSource(Mockito.any(), Mockito.any())).thenReturn(Mockito.mock(MarkdownSource.class));
+        MarkdownSource markdownSource = Mockito.mock(MarkdownSource.class);
+        Mockito.when(registrationHelper.buildSource(Mockito.any(), Mockito.any())).thenReturn(markdownSource);
         MarkdownSourceProvider markdownSourceProvider = Mockito.mock(MarkdownSourceProvider.class);
         SourceRegistrationService registrationService = new SourceRegistrationServiceImpl(Arrays.asList(registrationHelper), markdownSourceProvider);
 
@@ -52,6 +54,8 @@ class SourceRegistrationServiceImplTest {
         sourceInfo.setSourceId("mock-id");
 
         registrationService.registerSource(sourceInfo, Mockito.anyList());
+
+        Mockito.verify(markdownSource, Mockito.times(1)).initializeSource();
 
         Mockito.verify(markdownSourceProvider, Mockito.times(1)).registerSource(ArgumentMatchers.any(MarkdownSource.class));
     }

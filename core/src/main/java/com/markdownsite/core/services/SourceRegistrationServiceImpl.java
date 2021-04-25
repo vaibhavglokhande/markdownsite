@@ -3,6 +3,7 @@ package com.markdownsite.core.services;
 import com.markdownsite.core.enums.SourceRegistrationErrorCode;
 import com.markdownsite.core.exceptions.SourceRegistrationException;
 import com.markdownsite.core.interfaces.SourceRegistrationService;
+import com.markdownsite.integration.exceptions.AbstractException;
 import com.markdownsite.integration.exceptions.PropertyValidationException;
 import com.markdownsite.integration.exceptions.SourceException;
 import com.markdownsite.integration.interfaces.MarkdownSource;
@@ -44,12 +45,15 @@ public class SourceRegistrationServiceImpl implements SourceRegistrationService 
         SourceRegistrationHelper registrationHelper = registrationHelperOptional.get();
         try {
             MarkdownSource markdownSource = registrationHelper.buildSource(sourceInfo, configProperties);
+            markdownSource.initializeSource();
             markdownSourceProvider.registerSource(markdownSource);
         } catch (PropertyValidationException e) {
             // TODO Add logging
             throw new SourceRegistrationException(e, SourceRegistrationErrorCode.SOURCE_REGISTRATION_FAILED);
         } catch (SourceException e) {
             throw new SourceRegistrationException(e, SourceRegistrationErrorCode.SOURCE_NAME_PRESENT);
+        } catch (AbstractException e) {
+            throw new SourceRegistrationException(e, SourceRegistrationErrorCode.SOURCE_REGISTRATION_FAILED);
         }
     }
 
