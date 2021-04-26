@@ -17,5 +17,5 @@ Deploy the released jar using command given below.
 
 Run `mvn clean install` to build the project.
 
-The deployable application will be under `build/target`.
+The deployable application will be under `release/target`.
 

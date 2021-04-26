@@ -8,7 +8,7 @@
         <module>integration</module>
         <module>core</module>
         <module>security</module>
-        <module>build</module>
+        <module>release</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
