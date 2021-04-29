@@ -6,9 +6,7 @@ import com.markdownsite.core.utility.FileBasedSourceUtility;
 import com.markdownsite.integration.enums.PropertyValidationErrorCode;
 import com.markdownsite.integration.exceptions.PropertyValidationException;
 import com.markdownsite.integration.exceptions.TreeOperationException;
-import com.markdownsite.integration.interfaces.NavigableMarkdownSource;
-import com.markdownsite.integration.interfaces.SimpleTraverseMode;
-import com.markdownsite.integration.interfaces.Tree;
+import com.markdownsite.integration.interfaces.*;
 import com.markdownsite.integration.models.*;
 import lombok.Setter;
 
@@ -16,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.WatchEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FileBasedMarkdownSource implements NavigableMarkdownSource {
+public class FileBasedMarkdownSource implements NavigableMarkdownSource, ContextAwareEventListener<WatchEvent> {
 
     public static final String ALLOWED_SOURCE_EXTENSION = ".md";
     private SimpleTree<FileNode, File> fileSimpleTree;
@@ -34,15 +33,17 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource {
     public static final String PROPERTY_SOURCE_DIR = "FileSource.sourceDirectory";
     public static final String READ_FROM_CLASSPATH = "FileSource.readFromClasspath";
     private List<SourceProviderConfigProperty> sourceProviderConfig = new ArrayList<>();
-    private Map<String, MarkdownElement<String>> markdownSourceMap = new ConcurrentHashMap<>();
+    private Map<String, MarkdownElement<String>> markdownSourceMap;
     private Tree<SourceNavigationNode, String> navigationTree;
     @Setter
     private String sourceName;
     @Setter
     private String sourceDescription;
+    private boolean readFromClasspath = false;
+    private String sourceDirectoryPath;
 
     public FileBasedMarkdownSource(String sourceName) {
-        this(sourceName,"");
+        this(sourceName, "");
     }
 
     public FileBasedMarkdownSource(String sourceName, String sourceDescription) {
@@ -57,11 +58,17 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource {
         if (sourceDirectoryProperty == null)
             throw new FileBasedMarkdownSourceException(FileBasedMarkdownSourceErrorCode.SOURCE_DIRECTORY_NOT_CONFIGURED);
         SourceProviderConfigProperty<Boolean> readFromClassPathProperty = sourceProviderConfig.stream().filter(property -> property.getPropertyName().equalsIgnoreCase(READ_FROM_CLASSPATH)).findFirst().orElse(null);
-        boolean readFromClasspath = false;
         if (readFromClassPathProperty != null)
             readFromClasspath = readFromClassPathProperty.getPropertyValue();
+        sourceDirectoryPath = (String) sourceDirectoryProperty.getPropertyValue();
+        buildForest(readFromClasspath, sourceDirectoryPath);
+        ContextAware<String, WatchEvent> contextAware = new ContextAwareDirectory();
+        contextAware.setupAwareness(()->sourceDirectoryPath, this);
+    }
+
+    private void buildForest(boolean readFromClasspath, String sourceDirectoryPath) throws TreeOperationException {
         FileBasedSourceUtility fileBasedSourceUtility = new FileBasedSourceUtility();
-        this.fileSimpleTree = fileBasedSourceUtility.buildTree((String) sourceDirectoryProperty.getPropertyValue(), readFromClasspath, ALLOWED_SOURCE_EXTENSION);
+        this.fileSimpleTree = fileBasedSourceUtility.buildTree(sourceDirectoryPath, readFromClasspath, ALLOWED_SOURCE_EXTENSION);
         buildSource();
         buildNavigationTree();
     }
@@ -78,6 +85,7 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource {
     }
 
     private void buildSource() throws TreeOperationException {
+        markdownSourceMap = new ConcurrentHashMap<>();
         List<FileNode> fileNodes = fileSimpleTree.traverse(fileSimpleTree.getRootNode(), SimpleTraverseMode.BREADTH_FIRST);
         for (FileNode fileNode : fileNodes) {
             MarkdownElement<String> markdownElement = new MarkdownElement<>();
@@ -156,5 +164,14 @@ public class FileBasedMarkdownSource implements NavigableMarkdownSource {
         sourceProviderConfig.add(sourceProviderConfigProperty);
         SourceProviderConfigProperty<Boolean> readFromClassPathConfigProperty = new SourceProviderConfigProperty<>(READ_FROM_CLASSPATH, false);
         sourceProviderConfig.add(readFromClassPathConfigProperty);
+    }
+
+    @Override
+    public void listenEvent(WatchEvent event) {
+        try {
+            buildForest(readFromClasspath, sourceDirectoryPath);
+        } catch (TreeOperationException e) {
+            e.printStackTrace();
+        }
     }
 }
